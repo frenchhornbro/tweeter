@@ -95,7 +95,7 @@ const StatusItemScroller = (props: Props) => {
               key={index}
               className="row mb-3 mx-0 px-0 border rounded bg-white"
             >
-              <StatusItem item={item} displayedUser={displayedUser} setDisplayedUser={setDisplayedUser} currentUser={currentUser} authToken={authToken} />
+              <StatusItem item={item} />
             </div>
           ))}
         </InfiniteScroll>
