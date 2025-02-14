@@ -16,6 +16,9 @@ import useUserInfo from "./components/userInfo/UserInfoHook";
 import { UserItemView } from "./presenters/UserItemPresenter";
 import { FolloweePresenter } from "./presenters/FolloweePresenter";
 import { FollowerPresenter } from "./presenters/FollowerPresenter";
+import { FeedPresenter } from "./presenters/FeedPresenter";
+import { StoryPresenter } from "./presenters/StoryPresenter";
+import { StatusItemView } from "./presenters/StatusItemPresenter";
 
 const App = () => {
   const { currentUser, authToken } = useUserInfo();
@@ -43,26 +46,20 @@ const AuthenticatedRoutes = () => {
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<Navigate to="/feed" />} />
-        <Route path="feed" element={<StatusItemScroller type={"feed"} key={"feed"} />} />
-        <Route path="story" element={<StatusItemScroller type={"story"} key={"story"} />} />
+        <Route path="feed" element={
+          <StatusItemScroller presenterGenerator={(view: StatusItemView) => new FeedPresenter(view)} key={1} />
+          } />
+        <Route path="story" element={
+          <StatusItemScroller presenterGenerator={(view: StatusItemView) => new StoryPresenter(view)} key={2} />
+          } />
         <Route
-          path="followees"
-          element={
-            <UserItemScroller
-              key={1}
-              presenterGenerator={(view: UserItemView) => new FolloweePresenter(view)}
-            />
-          }
-        />
+          path="followees" element={
+          <UserItemScroller presenterGenerator={(view: UserItemView) => new FolloweePresenter(view)} key={1} />
+          } />
         <Route
-          path="followers"
-          element={
-            <UserItemScroller
-              key={2} 
-              presenterGenerator={(view: UserItemView) => new FollowerPresenter(view)}
-            />
-          }
-        />
+          path="followers" element={
+          <UserItemScroller presenterGenerator={(view: UserItemView) => new FollowerPresenter(view)} key={2} />
+          } />
         <Route path="logout" element={<Navigate to="/login" />} />
         <Route path="*" element={<Navigate to="/feed" />} />
       </Route>
