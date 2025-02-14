@@ -2,7 +2,7 @@ import { Buffer } from "buffer";
 import { User, AuthToken, FakeData } from "tweeter-shared";
 
 export class UserService {
-    async register (
+    public async register (
         firstName: string,
         lastName: string,
         alias: string,
@@ -24,10 +24,7 @@ export class UserService {
         return [user, FakeData.instance.authToken];
     }
 
-    async login(
-        alias: string,
-        password: string
-    ): Promise<[User, AuthToken]> {
+    public async login(alias: string, password: string): Promise<[User, AuthToken]> {
         // TODO: Replace with the result of calling the server
         const user = FakeData.instance.firstUser;
 
@@ -37,4 +34,9 @@ export class UserService {
 
         return [user, FakeData.instance.authToken];
     }
+
+    public async getUser(authToken: AuthToken, alias: string): Promise<User | null> {
+        // TODO: Replace with the result of calling server
+        return FakeData.instance.findUserByAlias(alias);
+    };
 }

@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { User } from "tweeter-shared";
-import useNavigateToUser from "../userNavigation/UserNavigationHook";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
+import { UserNavigationPresenter, UserNavigationView } from "../../presenters/userNavigation/UserNavigationPresenter";
+import { useState } from "react";
 
 interface Props {
   value: User;
@@ -11,6 +12,13 @@ interface Props {
 const UserItem = (props: Props) => {
   const { setDisplayedUser, currentUser, authToken } = useUserInfo();
   const { displayErrorMessage } = useToastListener();
+
+  const listener: UserNavigationView = {
+    setDisplayedUser,
+    displayErrorMessage
+  }
+
+  const [presenter] = useState(() => new UserNavigationPresenter(listener));
   
   return (
     <div className="col bg-light mx-0 px-0">
@@ -32,7 +40,7 @@ const UserItem = (props: Props) => {
               -{" "}
               <Link
                 to={props.value.alias}
-                onClick={(event) => useNavigateToUser(event, currentUser, authToken, setDisplayedUser, displayErrorMessage)}
+                onClick={(event) => presenter.useNavigateToUser(event, currentUser, authToken)}
               >
                 {props.value.alias}
               </Link>

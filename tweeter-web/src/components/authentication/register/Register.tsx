@@ -30,8 +30,6 @@ const Register = () => {
     setImageFileExtension
   };
 
-  //FIXME: Other stuff should probably also be hooks? check this
-  //TODO: Then determine how many other properties of AuthenticationPresenter and RegisterPresenter should actually be there (look at the presenter in the video to determine this)
   const [presenter] = useState(() => new RegisterPresenter(listener));
 
   const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {

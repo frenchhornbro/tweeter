@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Status, Type } from "tweeter-shared";
-import useNavigateToUser from "../userNavigation/UserNavigationHook";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
+import { useState } from "react";
+import { UserNavigationView, UserNavigationPresenter } from "../../presenters/userNavigation/UserNavigationPresenter";
 
 interface Props {
   status: Status;
@@ -12,6 +13,13 @@ const Post = (props: Props) => {
   const { setDisplayedUser, currentUser, authToken } = useUserInfo();
   const { displayErrorMessage } = useToastListener();
 
+  const listener: UserNavigationView = {
+    setDisplayedUser,
+    displayErrorMessage
+  }
+
+  const [presenter] = useState(() => new UserNavigationPresenter(listener));
+
   return (
     <>
       {props.status.segments.map((segment, index) =>
@@ -19,7 +27,7 @@ const Post = (props: Props) => {
           <Link
             key={index}
             to={segment.text}
-            onClick={(event) => useNavigateToUser(event, currentUser, authToken, setDisplayedUser, displayErrorMessage)}
+            onClick={(event) => presenter.useNavigateToUser(event, currentUser, authToken)}
           >
             {segment.text}
           </Link>
