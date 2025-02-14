@@ -1,3 +1,4 @@
+import { RegisterPresenter } from "../../presenters/authentication/RegisterPresenter";
 import OAuth from "./OAuth";
 
 interface Props {
@@ -6,15 +7,14 @@ interface Props {
   oAuthHeading: string;
   inputFieldGenerator: () => JSX.Element;
   switchAuthenticationMethodGenerator: () => JSX.Element;
-  setRememberMe: (value: boolean) => void;
   submitButtonDisabled: () => boolean;
-  isLoading: boolean;
+  presenter: RegisterPresenter;
   submit: () => void;
 }
 
 const AuthenticationFormLayout = (props: Props) => {
   return (
-    <div className={props.isLoading ? "loading" : ""}>
+    <div className={props.presenter.isLoading ? "loading" : ""}>
       <div className="center">
         <div className="form-main w-100 m-auto rounded">
           <form>
@@ -40,7 +40,7 @@ const AuthenticationFormLayout = (props: Props) => {
                   type="checkbox"
                   value="remember-me"
                   onChange={(event) =>
-                    props.setRememberMe(event.target.checked)
+                    props.presenter.rememberMe = event.target.checked
                   }
                 />{" "}
                 Remember me
@@ -56,7 +56,7 @@ const AuthenticationFormLayout = (props: Props) => {
               disabled={props.submitButtonDisabled()}
               onClick={() => props.submit()}
             >
-              {props.isLoading ? (
+              {props.presenter.isLoading ? (
                 <span
                   className="spinner-border spinner-border-sm"
                   role="status"

@@ -3,11 +3,12 @@ import "bootstrap/dist/css/bootstrap.css";
 import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
-import { AuthToken, FakeData, User } from "tweeter-shared";
 import { Buffer } from "buffer";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AuthenticationFields from "../AuthenticationFields";
 import useUserInfo from "../../userInfo/UserInfoHook";
+import { RegisterPresenter } from "../../../presenters/authentication/RegisterPresenter";
+import { AuthenticationView } from "../../../presenters/authentication/AuthenticationPresenter";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -17,8 +18,6 @@ const Register = () => {
   const [imageBytes, setImageBytes] = useState<Uint8Array>(new Uint8Array());
   const [imageUrl, setImageUrl] = useState<string>("");
   const [imageFileExtension, setImageFileExtension] = useState<string>("");
-  const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const { updateUserInfo } = useUserInfo();
@@ -35,17 +34,28 @@ const Register = () => {
     );
   };
 
+  const listener: AuthenticationView = {
+    displayErrorMessage: displayErrorMessage,
+    navigate: navigate,
+    updateUserInfo: updateUserInfo
+  };
+
+  //TODO: Generate presenter instead (if using the same one for register and login)
+  const [presenter] = useState(() => new RegisterPresenter(listener));
+
   const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.key == "Enter" && !checkSubmitButtonStatus()) {
       doRegister();
     }
   };
 
+  // TODO: Refactor this into presenter?
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     handleImageFile(file);
   };
 
+  // TODO: Refactor this into presenter?
   const handleImageFile = (file: File | undefined) => {
     if (file) {
       setImageUrl(URL.createObjectURL(file));
@@ -78,54 +88,13 @@ const Register = () => {
     }
   };
 
+  // TODO: Refactor this into presenter?
   const getFileExtension = (file: File): string | undefined => {
     return file.name.split(".").pop();
   };
 
-  const doRegister = async () => {
-    try {
-      setIsLoading(true);
-
-      const [user, authToken] = await register(
-        firstName,
-        lastName,
-        alias,
-        password,
-        imageBytes,
-        imageFileExtension
-      );
-
-      updateUserInfo(user, user, authToken, rememberMe);
-      navigate("/");
-    } catch (error) {
-      displayErrorMessage(
-        `Failed to register user because of exception: ${error}`
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const register = async (
-    firstName: string,
-    lastName: string,
-    alias: string,
-    password: string,
-    userImageBytes: Uint8Array,
-    imageFileExtension: string
-  ): Promise<[User, AuthToken]> => {
-    // Not neded now, but will be needed when you make the request to the server in milestone 3
-    const imageStringBase64: string =
-      Buffer.from(userImageBytes).toString("base64");
-
-    // TODO: Replace with the result of calling the server
-    const user = FakeData.instance.firstUser;
-
-    if (user === null) {
-      throw new Error("Invalid registration");
-    }
-
-    return [user, FakeData.instance.authToken];
+  const doRegister = () => {
+    presenter.doRegister(firstName, lastName, alias, password, imageBytes, imageFileExtension);
   };
 
   const inputFieldGenerator = () => {
@@ -174,7 +143,7 @@ const Register = () => {
   const switchAuthenticationMethodGenerator = () => {
     return (
       <div className="mb-3">
-        Algready registered? <Link to="/login">Sign in</Link>
+        Already registered? <Link to="/login">Sign in</Link>
       </div>
     );
   };
@@ -186,10 +155,9 @@ const Register = () => {
       oAuthHeading="Register with:"
       inputFieldGenerator={inputFieldGenerator}
       switchAuthenticationMethodGenerator={switchAuthenticationMethodGenerator}
-      setRememberMe={setRememberMe}
       submitButtonDisabled={checkSubmitButtonStatus}
-      isLoading={isLoading}
       submit={doRegister}
+      presenter={presenter}
     />
   );
 };
