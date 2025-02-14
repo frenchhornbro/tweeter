@@ -1,10 +1,9 @@
 // Component for alias and password
 
-import { AuthenticationPresenter } from "../../presenters/authentication/AuthenticationPresenter";
-
 interface Props {
     onEnter: (event: React.KeyboardEvent<HTMLElement>) => void;
-    presenter: AuthenticationPresenter;
+    setAlias: React.Dispatch<React.SetStateAction<string>>;
+    setPassword: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AuthenticationFields = (props: Props) => {
@@ -18,7 +17,7 @@ const AuthenticationFields = (props: Props) => {
                 id="aliasInput"
                 placeholder="name@example.com"
                 onKeyDown={props.onEnter}
-                onChange={(event) => props.presenter.alias = event.target.value}
+                onChange={(event) => props.setAlias(event.target.value)}
                 />
                 <label htmlFor="aliasInput">Alias</label>
             </div>
@@ -29,7 +28,7 @@ const AuthenticationFields = (props: Props) => {
                 id="passwordInput"
                 placeholder="Password"
                 onKeyDown={props.onEnter}
-                onChange={(event) => props.presenter.password = event.target.value}
+                onChange={(event) => props.setPassword(event.target.value)}
                 />
                 <label htmlFor="passwordInput">Password</label>
             </div>

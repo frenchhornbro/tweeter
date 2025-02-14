@@ -1,4 +1,4 @@
-import { RegisterPresenter } from "../../presenters/authentication/RegisterPresenter";
+import { AuthenticationPresenter } from "../../presenters/authentication/AuthenticationPresenter";
 import OAuth from "./OAuth";
 
 interface Props {
@@ -8,13 +8,14 @@ interface Props {
   inputFieldGenerator: () => JSX.Element;
   switchAuthenticationMethodGenerator: () => JSX.Element;
   submitButtonDisabled: () => boolean;
-  presenter: RegisterPresenter;
+  isLoading: boolean;
+  presenter: AuthenticationPresenter;
   submit: () => void;
 }
 
 const AuthenticationFormLayout = (props: Props) => {
   return (
-    <div className={props.presenter.isLoading ? "loading" : ""}>
+    <div className={props.isLoading ? "loading" : ""}>
       <div className="center">
         <div className="form-main w-100 m-auto rounded">
           <form>
@@ -56,7 +57,7 @@ const AuthenticationFormLayout = (props: Props) => {
               disabled={props.submitButtonDisabled()}
               onClick={() => props.submit()}
             >
-              {props.presenter.isLoading ? (
+              {props.isLoading ? (
                 <span
                   className="spinner-border spinner-border-sm"
                   role="status"

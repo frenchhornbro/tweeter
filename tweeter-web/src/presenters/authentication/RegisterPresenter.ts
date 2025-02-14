@@ -1,64 +1,39 @@
 import { ChangeEvent } from "react";
-import { UserService } from "../../model/service/UserService";
-import { AuthenticationPresenter, AuthenticationView } from "./AuthenticationPresenter";
+import { AuthenticationPresenter } from "./AuthenticationPresenter";
 import { Buffer } from "buffer";
+import { NavigateFunction } from "react-router-dom";
+import { User, AuthToken } from "tweeter-shared";
+
+export interface RegisterView {
+    displayErrorMessage: (message: string) => void;
+    navigate: NavigateFunction;
+    updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    setImageUrl: React.Dispatch<React.SetStateAction<string>>;
+    setImageFileExtension: React.Dispatch<React.SetStateAction<string>>;
+}
 
 export class RegisterPresenter extends AuthenticationPresenter {
+    private view: RegisterView;
     private imageBytes: Uint8Array;
-    private userService: UserService;
-    private _firstName: string;
-    private _lastName: string;
-    private _imageUrl: string;
-    private _imageFileExtension: string;
 
-    public set firstName(value: string) {
-        this._firstName = value;
-    }
-
-    public set lastName(value: string) {
-        this._firstName = value;
-    }
-
-    public get imageUrl(): string {
-        return this._imageUrl;
-    }
-
-    public get imageFileExtension(): string {
-        return this._imageFileExtension;
-    }
-
-    public constructor(view: AuthenticationView) {
-        super(view);
+    public constructor(view: RegisterView) {
+        super();
+        this.view = view;
         this.imageBytes = new Uint8Array();
-        this.userService = new UserService();
-        this._firstName = "";
-        this._lastName = "";
-        this._imageUrl = "";
-        this._imageFileExtension = "";
     }
 
-    public checkSubmitButtonStatus(): boolean {
-        return (
-        !this._firstName ||
-        !this._lastName ||
-        !this.alias ||
-        !this.password ||
-        !this._imageUrl ||
-        !this._imageFileExtension
-        );
-    }
-
-    public async doRegister() {
+    public async doRegister(firstName: string, lastName: string, alias: string, password: string, imageFileExtension: string) {
         try {
-            this.isLoading = true;
+            this.view.setIsLoading(true);
         
             const [user, authToken] = await this.userService.register(
-                this._firstName,
-                this._lastName,
-                this.alias,
-                this.password,
+                firstName,
+                lastName,
+                alias,
+                password,
                 this.imageBytes,
-                this._imageFileExtension
+                imageFileExtension
             );
         
             this.view.updateUserInfo(user, user, authToken, this.rememberMe);
@@ -66,18 +41,19 @@ export class RegisterPresenter extends AuthenticationPresenter {
         } catch (error) {
             this.view.displayErrorMessage(`Failed to register user because of exception: ${error}`);
         } finally {
-            this.isLoading = false;
+            this.view.setIsLoading(false);
         }
     }
 
-    public handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    // Arrow syntax preserves `this`
+    handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         this.handleImageFile(file);
-    }
+    };
 
     private handleImageFile(file: File | undefined) {
         if (file) {
-            this._imageUrl = URL.createObjectURL(file);
+            this.view.setImageUrl(URL.createObjectURL(file));
 
             const reader = new FileReader();
             reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -98,10 +74,10 @@ export class RegisterPresenter extends AuthenticationPresenter {
             // Set image file extension (and move to a separate method)
             const fileExtension = this.getFileExtension(file);
             if (fileExtension) {
-                this._imageFileExtension = fileExtension;
+                this.view.setImageFileExtension(fileExtension);
             }
         } else {
-            this._imageUrl = "";
+            this.view.setImageUrl("");
             this.imageBytes = new Uint8Array();
         }
     }

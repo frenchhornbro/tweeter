@@ -1,31 +1,54 @@
 import "./Register.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AuthenticationFields from "../AuthenticationFields";
 import useUserInfo from "../../userInfo/UserInfoHook";
-import { RegisterPresenter } from "../../../presenters/authentication/RegisterPresenter";
-import { AuthenticationView } from "../../../presenters/authentication/AuthenticationPresenter";
+import { RegisterPresenter, RegisterView } from "../../../presenters/authentication/RegisterPresenter";
 
 const Register = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [alias, setAlias] = useState("");
+  const [password, setPassword] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageFileExtension, setImageFileExtension] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
   const { updateUserInfo } = useUserInfo();
   const { displayErrorMessage } = useToastListener();
 
-  const listener: AuthenticationView = {
-    displayErrorMessage: displayErrorMessage,
-    navigate: navigate,
-    updateUserInfo: updateUserInfo
+  const listener: RegisterView = {
+    displayErrorMessage,
+    navigate,
+    updateUserInfo,
+    setIsLoading,
+    setImageUrl,
+    setImageFileExtension
   };
 
+  //FIXME: Other stuff should probably also be hooks? check this
+  //TODO: Then determine how many other properties of AuthenticationPresenter and RegisterPresenter should actually be there (look at the presenter in the video to determine this)
   const [presenter] = useState(() => new RegisterPresenter(listener));
 
   const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key == "Enter" && !presenter.checkSubmitButtonStatus()) {
-      presenter.doRegister();
+    if (event.key == "Enter" && !checkSubmitButtonStatus()) {
+      presenter.doRegister(firstName, lastName, alias, password, imageFileExtension);
     }
+  };
+
+  const checkSubmitButtonStatus = (): boolean => {
+    return (
+    !firstName ||
+    !lastName ||
+    !alias ||
+    !password ||
+    !imageUrl ||
+    !imageFileExtension
+    );
   };
 
   const inputFieldGenerator = () => {
@@ -39,7 +62,7 @@ const Register = () => {
             id="firstNameInput"
             placeholder="First Name"
             onKeyDown={registerOnEnter}
-            onChange={(event) => presenter.firstName = event.target.value}
+            onChange={(event) => setFirstName(event.target.value)}
           />
           <label htmlFor="firstNameInput">First Name</label>
         </div>
@@ -51,21 +74,21 @@ const Register = () => {
             id="lastNameInput"
             placeholder="Last Name"
             onKeyDown={registerOnEnter}
-            onChange={(event) => presenter.lastName = event.target.value}
+            onChange={(event) => setLastName(event.target.value)}
           />
           <label htmlFor="lastNameInput">Last Name</label>
         </div>
-        <AuthenticationFields onEnter={registerOnEnter} presenter={presenter} />
+        <AuthenticationFields onEnter={registerOnEnter} setAlias={setAlias} setPassword={setPassword} />
         <div className="form-floating mb-3">
           <input
             type="file"
             className="d-inline-block py-5 px-4 form-control bottom"
             id="imageFileInput"
             onKeyDown={registerOnEnter}
-            onChange={presenter.handleFileChange}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => presenter.handleFileChange(event)}
           />
           <label htmlFor="imageFileInput">User Image</label>
-          <img src={presenter.imageUrl} className="img-thumbnail" alt=""></img>
+          <img src={imageUrl} className="img-thumbnail" alt=""></img>
         </div>
       </>
     );
@@ -86,9 +109,10 @@ const Register = () => {
       oAuthHeading="Register with:"
       inputFieldGenerator={inputFieldGenerator}
       switchAuthenticationMethodGenerator={switchAuthenticationMethodGenerator}
-      submitButtonDisabled={presenter.checkSubmitButtonStatus}
-      submit={presenter.doRegister}
+      submitButtonDisabled={() => checkSubmitButtonStatus()}
+      isLoading={isLoading}
       presenter={presenter}
+      submit={() => presenter.doRegister(firstName, lastName, alias, password, imageFileExtension)}
     />
   );
 };
