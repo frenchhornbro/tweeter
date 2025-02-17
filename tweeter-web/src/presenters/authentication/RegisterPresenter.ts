@@ -8,9 +8,9 @@ export interface RegisterView {
     displayErrorMessage: (message: string) => void;
     navigate: NavigateFunction;
     updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void;
-    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-    setImageUrl: React.Dispatch<React.SetStateAction<string>>;
-    setImageFileExtension: React.Dispatch<React.SetStateAction<string>>;
+    setIsLoading: (isLoading: boolean) => void;
+    setImageUrl: (imageUrl: string) => void;
+    setImageFileExtension: (imageFileExtension: string) => void;
 }
 
 export class RegisterPresenter extends AuthenticationPresenter {

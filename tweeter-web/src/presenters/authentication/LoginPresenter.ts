@@ -6,7 +6,7 @@ export interface LoginView {
     displayErrorMessage: (message: string) => void;
     navigate: NavigateFunction;
     updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void;
-    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsLoading: (isLoading: boolean) => void;
 }
 
 export class LoginPresenter extends AuthenticationPresenter {
