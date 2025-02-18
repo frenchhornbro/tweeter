@@ -3,8 +3,9 @@ import { AuthenticationPresenter } from "./AuthenticationPresenter";
 import { Buffer } from "buffer";
 import { NavigateFunction } from "react-router-dom";
 import { User, AuthToken } from "tweeter-shared";
+import { View } from "../Presenter";
 
-export interface RegisterView {
+export interface RegisterView extends View {
     displayErrorMessage: (message: string) => void;
     navigate: NavigateFunction;
     updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void;
@@ -13,18 +14,16 @@ export interface RegisterView {
     setImageFileExtension: (imageFileExtension: string) => void;
 }
 
-export class RegisterPresenter extends AuthenticationPresenter {
-    private view: RegisterView;
+export class RegisterPresenter extends AuthenticationPresenter<RegisterView> {
     private imageBytes: Uint8Array;
 
     public constructor(view: RegisterView) {
-        super();
-        this.view = view;
+        super(view);
         this.imageBytes = new Uint8Array();
     }
 
     public async doRegister(firstName: string, lastName: string, alias: string, password: string, imageFileExtension: string) {
-        try {
+        this.doFailureReportingOpertaion(async () => {
             this.view.setIsLoading(true);
         
             const [user, authToken] = await this.userService.register(
@@ -38,11 +37,9 @@ export class RegisterPresenter extends AuthenticationPresenter {
         
             this.view.updateUserInfo(user, user, authToken, this.rememberMe);
             this.view.navigate("/");
-        } catch (error) {
-            this.view.displayErrorMessage(`Failed to register user because of exception: ${error}`);
-        } finally {
+        }, 'register user', () => {
             this.view.setIsLoading(false);
-        }
+        });
     }
 
     // Arrow syntax preserves `this`

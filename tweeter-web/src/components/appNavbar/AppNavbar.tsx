@@ -4,7 +4,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import Image from "react-bootstrap/Image";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
-import { LogoutPresenter, LogoutView } from "../../presenters/appNavbar/Logout";
+import { LogoutPresenter, LogoutView } from "../../presenters/appNavbar/LogoutPresenter";
 import { useState } from "react";
 
 const AppNavbar = () => {

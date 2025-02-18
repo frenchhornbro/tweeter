@@ -1,4 +1,5 @@
 import { AuthenticationPresenter } from "../../presenters/authentication/AuthenticationPresenter";
+import { View } from "../../presenters/Presenter";
 import OAuth from "./OAuth";
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
   switchAuthenticationMethodGenerator: () => JSX.Element;
   submitButtonDisabled: () => boolean;
   isLoading: boolean;
-  presenter: AuthenticationPresenter;
+  presenter: AuthenticationPresenter<View>;
   submit: () => void;
 }
 

@@ -1,6 +1,7 @@
 import { UserService } from "../../model/service/UserService";
+import { Presenter, View } from "../Presenter";
 
-export abstract class AuthenticationPresenter {
+export abstract class AuthenticationPresenter<V extends View> extends Presenter<V> {
     private _userService: UserService;
     private _rememberMe: boolean = false;
     
@@ -16,7 +17,8 @@ export abstract class AuthenticationPresenter {
         this._rememberMe = value;
     }
 
-    protected constructor() {
+    protected constructor(view: V) {
+        super(view);
         this._userService = new UserService();
     }
 }
