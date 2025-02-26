@@ -4,7 +4,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import Image from "react-bootstrap/Image";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
-import { LogoutPresenter, LogoutView } from "../../presenters/appNavbar/LogoutPresenter";
+import { AppNavbarPresenter, AppNavbarView } from "../../presenters/appNavbar/AppNavbarPresenter";
 import { useState } from "react";
 
 const AppNavbar = () => {
@@ -12,14 +12,14 @@ const AppNavbar = () => {
   const { authToken, clearUserInfo } = useUserInfo();
   const { displayInfoMessage, displayErrorMessage, clearLastInfoMessage } = useToastListener();
 
-  const listener: LogoutView = {
+  const listener: AppNavbarView = {
     clearUserInfo,
     displayInfoMessage,
     displayErrorMessage,
     clearLastInfoMessage
   };
 
-  const [presenter] = useState(() => new LogoutPresenter(listener));
+  const [presenter] = useState(() => new AppNavbarPresenter(listener));
 
   return (
     <Navbar
