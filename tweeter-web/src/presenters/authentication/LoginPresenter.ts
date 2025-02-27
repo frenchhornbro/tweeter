@@ -9,7 +9,7 @@ export class LoginPresenter extends AuthenticationPresenter<AuthenticationView> 
     }
 
     public async doLogin(alias: string, password: string) {
-        this.doAuthenticationOperation(() => this.userService.login(alias, password), () => {
+        await this.doAuthenticationOperation(() => this.userService.login(alias, password), () => {
             if (!!this.originalUrl) {
                 this.view.navigate(this.originalUrl);
             } else {

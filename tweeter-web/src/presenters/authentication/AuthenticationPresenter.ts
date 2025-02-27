@@ -30,8 +30,8 @@ export abstract class AuthenticationPresenter<V extends AuthenticationView> exte
         this._userService = new UserService();
     }
 
-    protected doAuthenticationOperation(authRequest: () => Promise<[User, AuthToken]>, doNavigation: () => void, authDescription: string) {
-        this.doFailureReportingOpertaion(async () => {
+    protected async doAuthenticationOperation(authRequest: () => Promise<[User, AuthToken]>, doNavigation: () => void, authDescription: string) {
+        await this.doFailureReportingOpertaion(async () => {
             this.view.setIsLoading(true);
 
             const [user, authToken] = await authRequest();

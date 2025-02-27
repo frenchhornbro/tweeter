@@ -18,7 +18,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
     }
 
     public async setIsFollowerStatus(authToken: AuthToken, currentUser: User, displayedUser: User ) {
-        this.doFailureReportingOpertaion(async () => {
+        await this.doFailureReportingOpertaion(async () => {
             if (currentUser === displayedUser) {
                 this.view.setIsFollower(false);
             } else {
@@ -28,13 +28,13 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
     }
 
     public async setNumbFollowees(authToken: AuthToken, displayedUser: User) {
-        this.doFailureReportingOpertaion(async () => {
+        await this.doFailureReportingOpertaion(async () => {
             this.view.setFolloweeCount(await this.followService.getFolloweeCount(authToken, displayedUser));
         }, 'get followees count');
     }
 
     public async setNumbFollowers(authToken: AuthToken, displayedUser: User) {
-        this.doFailureReportingOpertaion(async () => {
+        await this.doFailureReportingOpertaion(async () => {
             this.view.setFollowerCount(await this.followService.getFollowerCount(authToken, displayedUser));
         }, 'get followers count');
     }
@@ -42,7 +42,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
     public async followDisplayedUser(event: React.MouseEvent, displayedUser: User, authToken: AuthToken): Promise<void> {
         event.preventDefault();
 
-        this.doFailureReportingOpertaion(async () => {
+        await this.doFailureReportingOpertaion(async () => {
             this.view.setIsLoading(true);
             this.view.displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
 
@@ -60,7 +60,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
     public async unfollowDisplayedUser(event: React.MouseEvent, displayedUser: User, authToken: AuthToken): Promise<void> {
         event.preventDefault();
 
-        this.doFailureReportingOpertaion(async () => {
+        await this.doFailureReportingOpertaion(async () => {
             this.view.setIsLoading(true);
             this.view.displayInfoMessage(`Unfollowing ${displayedUser!.name}...`, 0);
 
