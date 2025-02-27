@@ -11,6 +11,7 @@ import { AuthenticationView } from "../../../presenters/authentication/Authentic
 
 interface Props {
   originalUrl?: string;
+  presenter?: LoginPresenter;
 }
 
 const Login = (props: Props) => {
@@ -27,7 +28,7 @@ const Login = (props: Props) => {
 
   const loginOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.key == "Enter" && !checkSubmitButtonStatus()) {
-      presenter.doLogin(alias, password);
+      presenter.doLogin(alias, password, props.originalUrl);
     }
   };
 
@@ -38,7 +39,7 @@ const Login = (props: Props) => {
     setIsLoading
   }
 
-  const [presenter] = useState(() => new LoginPresenter(listener, props.originalUrl));
+  const [presenter] = useState(() => props.presenter ?? new LoginPresenter(listener));
 
   const inputFieldGenerator = () => {
     return (
@@ -64,7 +65,7 @@ const Login = (props: Props) => {
       submitButtonDisabled={checkSubmitButtonStatus}
       isLoading={isLoading}
       presenter={presenter}
-      submit={() => presenter.doLogin(alias, password)}
+      submit={() => presenter.doLogin(alias, password, props.originalUrl)}
     />
   );
 };
