@@ -4,7 +4,11 @@ import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
 import { PostStatusPresenter, PostStatusView } from "../../presenters/postStatus/PostStatusPresenter";
 
-const PostStatus = () => {
+interface Props {
+  presenter?: PostStatusPresenter;
+};
+
+const PostStatus = (props: Props) => {
   const { displayErrorMessage, displayInfoMessage, clearLastInfoMessage } = useToastListener();
 
   const { currentUser, authToken } = useUserInfo();
@@ -28,7 +32,7 @@ const PostStatus = () => {
     clearLastInfoMessage
   }
 
-  const [presenter] = useState(() => new PostStatusPresenter(listener));
+  const [presenter] = useState(() => props.presenter ?? new PostStatusPresenter(listener));
 
   return (
     <div className={isLoading ? "loading" : ""}>
@@ -37,6 +41,7 @@ const PostStatus = () => {
           <textarea
             className="form-control"
             id="postStatusTextArea"
+            aria-label="postStatusTextbox"
             rows={10}
             placeholder="What's on your mind?"
             value={post}
