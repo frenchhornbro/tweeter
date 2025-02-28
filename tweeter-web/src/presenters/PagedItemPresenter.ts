@@ -44,7 +44,7 @@ export abstract class PagedItemPresenter<T, U> extends Presenter<PagedItemView<T
     protected abstract getMoreItems(authToken: AuthToken, userAlias: string): Promise<[T[], boolean]>;
     
     public async loadMoreItems(authToken: AuthToken, userAlias: string) {
-        await this.doFailureReportingOpertaion(async () => {
+        await this.doFailureReportingOperation(async () => {
             const [newItems, hasMore] = await this.getMoreItems(
                 authToken,
                 userAlias

@@ -22,7 +22,7 @@ export class PostStatusPresenter extends Presenter<PostStatusView> {
     public async submitPost(event: React.MouseEvent, post: string, currentUser: User, authToken: AuthToken) {
         event.preventDefault();
 
-        await this.doFailureReportingOpertaion(async () => {
+        await this.doFailureReportingOperation(async () => {
             this.view.setIsLoading(true);
             this.view.displayInfoMessage("Posting status...", 0);
 

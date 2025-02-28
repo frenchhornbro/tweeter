@@ -31,7 +31,7 @@ export abstract class AuthenticationPresenter<V extends AuthenticationView> exte
     }
 
     protected async doAuthenticationOperation(authRequest: () => Promise<[User, AuthToken]>, doNavigation: () => void, authDescription: string) {
-        await this.doFailureReportingOpertaion(async () => {
+        await this.doFailureReportingOperation(async () => {
             this.view.setIsLoading(true);
 
             const [user, authToken] = await authRequest();
