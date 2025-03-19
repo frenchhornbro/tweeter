@@ -4,12 +4,12 @@ import { PAGE_SIZE } from "../PagedItemPresenter";
 
 export class FollowerPresenter extends UserItemPresenter {
     protected getMoreItems(authToken: AuthToken, userAlias: string): Promise<[User[], boolean]> {
-        return this.service.loadMoreFollowers(
-            authToken,
-            userAlias,
-            PAGE_SIZE,
-            this.lastItem
-        );
+        return this.serverFacade.getMoreFollowers({
+            token: authToken.token,
+            userAlias: userAlias,
+            pageSize: PAGE_SIZE,
+            lastItem: this.lastItem ? this.lastItem?.getDTO() : null
+        });
     }
     
     protected getItemDescription(): string {
