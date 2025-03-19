@@ -8,7 +8,7 @@ export class FollowService {
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         // TODO: Replace with the result of calling server
-        return this.getFakeData(lastItem, pageSize, userAlias);
+        return await this.getFakeData(lastItem, pageSize, userAlias);
     }
     
     public async loadMoreFollowers(
@@ -18,7 +18,7 @@ export class FollowService {
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         // TODO: Replace with the result of calling server
-        return this.getFakeData(lastItem, pageSize, userAlias);
+        return await this.getFakeData(lastItem, pageSize, userAlias);
     }
 
     private async getFakeData(lastItem: UserDTO | null, pageSize: number, userAlias: string): Promise<[UserDTO[], boolean]> {
