@@ -1,4 +1,4 @@
-import { FakeData, FollowerCountRequest, PagedUserItemRequest, User } from "tweeter-shared";
+import { FakeData, UserItemCountRequest, PagedUserItemRequest, User } from "tweeter-shared";
 import { ServerFacade } from "../../../src/model/network/ServerFacade";
 import "isomorphic-fetch"
 
@@ -29,7 +29,7 @@ describe("GetFollowers", () => {
 });
 
 describe("GetFollowerCount", () => {
-    let req: FollowerCountRequest = {
+    let req: UserItemCountRequest = {
         token: "mytoken",
         userAlias: "myAlias"
     };

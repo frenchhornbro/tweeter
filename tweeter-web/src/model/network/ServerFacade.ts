@@ -1,4 +1,4 @@
-import { FollowerCountRequest, FollowerCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User } from "tweeter-shared";
+import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
@@ -13,8 +13,13 @@ export class ServerFacade {;
         return await this.getMoreUserItems(req, 'follower', 'followers');
     }
 
-    public async getFollowerCount(req: FollowerCountRequest): Promise<number> {
-        const res = await this.clientCommunicator.doPost<FollowerCountRequest, FollowerCountResponse>(req, '/follower/count');
+    public async getFollowerCount(req: UserItemCountRequest): Promise<number> {
+        const res = await this.clientCommunicator.doPost<UserItemCountRequest, UserItemCountResponse>(req, '/follower/count');
+        return this.checkForError(res, () => res.count);
+    }
+
+    public async getFolloweeCount(req: UserItemCountRequest): Promise<number> {
+        const res = await this.clientCommunicator.doPost<UserItemCountRequest, UserItemCountResponse>(req, '/followee/count');
         return this.checkForError(res, () => res.count);
     }
 

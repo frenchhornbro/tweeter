@@ -1,8 +1,9 @@
 BUCKET='hyrum-durfee-cs340'
 LAMBDA_ROLE='arn:aws:iam::891377292039:role/CS-340-Tweeter-Lambda'
 EDIT_LAMBDALIST='
-tweeterGetFollowees | lambda/follow/GetFolloweesLambda.handler
-tweeterGetFollowers | lambda/follow/GetFollowersLambda.handler
-tweeterGetFollowerCount | lambda/follow/GetFollowerCountLambda.handler
+tweeterGetFollowees | lambda/follow/userItem/GetFolloweesLambda.handler
+tweeterGetFollowers | lambda/follow/userItem/GetFollowersLambda.handler
+tweeterGetFollowerCount | lambda/follow/count/GetFollowerCountLambda.handler
+tweeterGetFolloweeCount | lambda/follow/count/GetFolloweeCountLambda.handler
 '
 LAMBDALAYER_ARN='arn:aws:lambda:us-east-1:891377292039:layer:CS340-Tweeter:4'

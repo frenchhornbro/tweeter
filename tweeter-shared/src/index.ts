@@ -20,14 +20,14 @@ export type { UserDTO } from "./model/dto/UserDTO";
 // 
 export type { TweeterRequest } from "./model/net/request/TweeterRequest";
 export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequest";
-export type { FollowerCountRequest } from "./model/net/request/FollowerCountRequest";
+export type { UserItemCountRequest } from "./model/net/request/UserItemCountRequest";
 
 // 
 // Responses
 // 
 export type { TweeterResponse } from "./model/net/response/TweeterResponse";
 export type { PagedUserItemResponse } from "./model/net/response/PagedUserItemResponse";
-export type { FollowerCountResponse } from "./model/net/response/FollowerCountResponse";
+export type { UserItemCountResponse } from "./model/net/response/UserItemCountResponse";
 
 // 
 // Other
