@@ -1,4 +1,4 @@
-import { PagedUserItemRequest, PagedUserItemResponse, User } from "tweeter-shared";
+import { FollowerCountRequest, FollowerCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
@@ -13,12 +13,23 @@ export class ServerFacade {;
         return await this.getMoreUserItems(req, 'follower', 'followers');
     }
 
+    public async getFollowerCount(req: FollowerCountRequest): Promise<number> {
+        const res = await this.clientCommunicator.doPost<FollowerCountRequest, FollowerCountResponse>(req, '/follower/count');
+        return this.checkForError(res, () => res.count);
+    }
+
     private async getMoreUserItems(req: PagedUserItemRequest, path: string, userItemType: string): Promise<[User[], boolean]> {
         const res = await this.clientCommunicator.doPost<PagedUserItemRequest, PagedUserItemResponse>(req, `/${path}/list`);
         const items: User[] | null = res.success && res.items ? res.items.map((dto) => User.fromDTO(dto) as User) : null;
-        if (res.success) {
+        return this.checkForError(res, () => {
             if (items === null) throw new Error(`No ${userItemType} found`);
             else return [items, res.hasMore];
+        });
+    }
+
+    private checkForError(res: TweeterResponse, onSuccess: () => any) {
+        if (res.success) {
+            return onSuccess();
         }
         else {
             console.error(res);
