@@ -1,6 +1,6 @@
-import { handler as followeesHandler } from "../../../src/lambda/follow/GetFolloweesLambda"
-import { handler as followerCountHandler } from "../../../src/lambda/follow/GetFollowerCountLambda";
-import { handler as followeeCountHandler } from "../../../src/lambda/follow/GetFolloweeCountLambda";
+import { handler as followeesHandler } from "../../../src/lambda/follow/userItem/GetFolloweesLambda"
+import { handler as followerCountHandler } from "../../../src/lambda/follow/count/GetFollowerCountLambda";
+import { handler as followeeCountHandler } from "../../../src/lambda/follow/count/GetFolloweeCountLambda";
 
 describe("GetFolloweesLambda", () => {
     it("handler function works", async() => {
