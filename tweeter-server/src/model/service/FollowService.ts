@@ -30,6 +30,15 @@ export class FollowService {
         return FakeData.instance.getFollowerCount(userAlias);
     }
 
+    public async getFolloweeCount(
+        token: string,
+        userAlias: string
+    ): Promise<number> {
+        // TODO: Replace with the result of calling server
+        return FakeData.instance.getFolloweeCount(userAlias);
+    }
+
+
     private async getFakeData(lastItem: UserDTO | null, pageSize: number, userAlias: string): Promise<[UserDTO[], boolean]> {
         const [items, hasMore] = FakeData.instance.getPageOfUsers(User.fromDTO(lastItem), pageSize, userAlias);
         const dtos = items.map((user) => user.getDTO());
