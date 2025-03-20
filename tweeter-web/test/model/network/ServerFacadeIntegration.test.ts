@@ -1,20 +1,19 @@
-import { FakeData, PagedUserItemRequest, User } from "tweeter-shared";
+import { FakeData, FollowerCountRequest, PagedUserItemRequest, User } from "tweeter-shared";
 import { ServerFacade } from "../../../src/model/network/ServerFacade";
 import "isomorphic-fetch"
 
 const serverFacade = new ServerFacade();
-let req: PagedUserItemRequest;
-let items: User[];
-let hasMore: boolean;
 
 describe("GetFollowers", () => {
+    let req: PagedUserItemRequest = {
+        token: "mytoken",
+        userAlias: "myAlias",
+        pageSize: 12345,
+        lastItem: null
+    };
+    let items: User[];
+    let hasMore: boolean;
     beforeAll(async() => {
-        req = {
-            "token": "mytoken",
-            "userAlias": "myAlias",
-            "pageSize": 12345,
-            "lastItem": null
-        };
         [items, hasMore] = await serverFacade.getMoreFollowers(req);
     });
 
@@ -26,5 +25,21 @@ describe("GetFollowers", () => {
         const [expItems, expHasMore] = FakeData.instance.getPageOfUsers(User.fromDTO(req.lastItem), req.pageSize, req.userAlias);
         expect(items).toStrictEqual(expItems);
         expect(hasMore).toBe(expHasMore);
+    });
+});
+
+describe("GetFollowerCount", () => {
+    let req: FollowerCountRequest = {
+        token: "mytoken",
+        userAlias: "myAlias"
+    };
+    let count: number;
+    beforeAll(async() => {
+        count = await serverFacade.getFollowerCount(req);
+    });
+
+    it("gets the correct count over the network", () => {
+        expect(count).toBeLessThanOrEqual(10);
+        expect(count).toBeGreaterThanOrEqual(1);
     });
 });
