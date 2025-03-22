@@ -1,4 +1,4 @@
-import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse, FollowRequest, FollowResponse } from "tweeter-shared";
+import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse, FollowRequest, FollowResponse, StatusItemRequest, StatusItemResponse, Status } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
@@ -34,6 +34,15 @@ export class ServerFacade {;
 
     public async unfollow(req: FollowRequest): Promise<[followerCount: number, followeeCount: number]> {
         return await this.followAction(req, false);
+    }
+
+    public async loadMoreFeedItems(req: StatusItemRequest): Promise<[Status[], boolean]> {
+        const res = await this.clientCommunicator.doPost<StatusItemRequest, StatusItemResponse>(req, '/load/feed');
+        const items: Status[] | null = res.success && res.items ? res.items.map((dto) => Status.fromDTO(dto) as Status) : null;
+        return this.checkForError(res, () => {
+            if (items === null) throw new Error('No feed items found');
+            else return [items, res.hasMore];
+        });
     }
 
     private async followAction(req: FollowRequest, isFollow: boolean): Promise<[followerCount: number, followeeCount: number]> {
