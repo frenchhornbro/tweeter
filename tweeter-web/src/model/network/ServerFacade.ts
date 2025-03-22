@@ -45,6 +45,15 @@ export class ServerFacade {;
         });
     }
 
+    public async loadMoreStoryItems(req: StatusItemRequest): Promise<[Status[], boolean]> {
+        const res = await this.clientCommunicator.doPost<StatusItemRequest, StatusItemResponse>(req, '/load/story');
+        const items: Status[] | null = res.success && res.items ? res.items.map((dto) => Status.fromDTO(dto) as Status) : null;
+        return this.checkForError(res, () => {
+            if (items === null) throw new Error('No feed items found');
+            else return [items, res.hasMore];
+        });
+    }
+
     private async followAction(req: FollowRequest, isFollow: boolean): Promise<[followerCount: number, followeeCount: number]> {
         const path = isFollow ? 'follow' : 'unfollow';
         const res = await this.clientCommunicator.doPost<FollowRequest, FollowResponse>(req, `/action/${path}`);
