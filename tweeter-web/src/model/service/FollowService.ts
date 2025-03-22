@@ -8,15 +8,6 @@ export class FollowService {
         this.serverFacade = new ServerFacade();
     }
 
-    public async getIsFollowerStatus(
-        authToken: AuthToken,
-        user: User,
-        selectedUser: User
-    ): Promise<boolean> {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.isFollower();
-    }
-
     public async follow(
         authToken: AuthToken,
         userToFollow: User

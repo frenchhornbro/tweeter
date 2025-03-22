@@ -22,20 +22,29 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
             if (currentUser === displayedUser) {
                 this.view.setIsFollower(false);
             } else {
-                this.view.setIsFollower(await this.followService.getIsFollowerStatus(authToken!, currentUser!, displayedUser!));
+                this.view.setIsFollower(await this.serverFacade.getIsFollowerStatus({
+                    token: authToken.token,
+                    user: currentUser.getDTO(),
+                    selectedUser: displayedUser.getDTO()}));
             }
         }, 'determine follower status');
     }
 
     public async setNumbFollowees(authToken: AuthToken, displayedUser: User) {
         await this.doFailureReportingOperation(async () => {
-            this.view.setFolloweeCount(await this.serverFacade.getFolloweeCount({token: authToken.token, userAlias: displayedUser.alias}));
+            this.view.setFolloweeCount(await this.serverFacade.getFolloweeCount({
+                token: authToken.token,
+                userAlias: displayedUser.alias
+            }));
         }, 'get followees count');
     }
 
     public async setNumbFollowers(authToken: AuthToken, displayedUser: User) {
         await this.doFailureReportingOperation(async () => {
-            this.view.setFollowerCount(await this.serverFacade.getFollowerCount({token: authToken.token, userAlias: displayedUser.alias}));
+            this.view.setFollowerCount(await this.serverFacade.getFollowerCount({
+                token: authToken.token,
+                userAlias: displayedUser.alias
+            }));
         }, 'get followers count');
     }
 
