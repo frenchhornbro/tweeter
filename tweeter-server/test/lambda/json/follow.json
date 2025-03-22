@@ -1,0 +1,9 @@
+{
+    "token": "mytoken",
+    "userToFollow": {
+    "firstname": "firstname",
+    "lastname": "lastname",
+    "alias": "alias",
+    "imageURL": "imageURL"
+    }
+}
