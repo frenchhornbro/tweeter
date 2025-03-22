@@ -1,4 +1,4 @@
-import { handler } from "../../../src/lambda/status/load/GetFeedItemLambda";
+import { handler } from "../../../src/lambda/status/load/GetFeedItemsLambda";
 
 describe("GetFeedItemLambda", () => {
     it("handler function works", async() => {
