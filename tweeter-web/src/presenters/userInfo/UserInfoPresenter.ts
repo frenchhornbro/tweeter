@@ -55,7 +55,10 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
             this.view.setIsLoading(true);
             this.view.displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
 
-            const [followerCount, followeeCount] = await this.followService.follow(authToken!, displayedUser!);
+            const [followerCount, followeeCount] = await this.serverFacade.follow({
+                token: authToken.token,
+                userToFollow: displayedUser.getDTO()
+        });
 
             this.view.setIsFollower(true);
             this.view.setFollowerCount(followerCount);

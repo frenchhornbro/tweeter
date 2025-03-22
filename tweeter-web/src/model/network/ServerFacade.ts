@@ -1,4 +1,4 @@
-import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse } from "tweeter-shared";
+import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse, FollowRequest, FollowResponse } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
@@ -26,6 +26,11 @@ export class ServerFacade {;
     public async getIsFollowerStatus(req: IsFollowerRequest): Promise<boolean> {
         const res = await this.clientCommunicator.doPost<IsFollowerRequest, IsFollowerResponse>(req, '/is-follower');
         return this.checkForError(res, () => res.isFollower);
+    }
+
+    public async follow(req: FollowRequest): Promise<[followerCount: number, followeeCount: number]> {
+        const res = await this.clientCommunicator.doPost<FollowRequest, FollowResponse>(req, '/follow');
+        return this.checkForError(res, () => [res.followerCount, res.followeeCount]);
     }
 
     private async getMoreUserItems(req: PagedUserItemRequest, path: string, userItemType: string): Promise<[User[], boolean]> {
