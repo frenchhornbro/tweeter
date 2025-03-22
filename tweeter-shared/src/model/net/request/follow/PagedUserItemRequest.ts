@@ -1,5 +1,5 @@
-import { UserDTO } from "../../dto/UserDTO";
-import { TweeterRequest } from "./TweeterRequest";
+import { UserDTO } from "../../../dto/UserDTO";
+import { TweeterRequest } from "../TweeterRequest";
 
 export interface PagedUserItemRequest extends TweeterRequest {
     readonly token: string;

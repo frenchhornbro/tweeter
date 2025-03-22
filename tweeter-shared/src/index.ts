@@ -20,20 +20,20 @@ export type { StatusDTO } from "./model/dto/StatusDTO";
 // Requests
 // 
 export type { TweeterRequest } from "./model/net/request/TweeterRequest";
-export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequest";
-export type { UserItemCountRequest } from "./model/net/request/UserItemCountRequest";
-export type { IsFollowerRequest } from "./model/net/request/IsFollowerRequest";
-export type { FollowRequest } from "./model/net/request/FollowRequest";
+export type { PagedUserItemRequest } from "./model/net/request/follow/PagedUserItemRequest";
+export type { UserItemCountRequest } from "./model/net/request/follow/UserItemCountRequest";
+export type { IsFollowerRequest } from "./model/net/request/follow/IsFollowerRequest";
+export type { FollowRequest } from "./model/net/request/follow/FollowRequest";
 export type { StatusItemRequest } from "./model/net/request/status/StatusItemRequest";
 
 // 
 // Responses
 // 
 export type { TweeterResponse } from "./model/net/response/TweeterResponse";
-export type { PagedUserItemResponse } from "./model/net/response/PagedUserItemResponse";
-export type { UserItemCountResponse } from "./model/net/response/UserItemCountResponse";
-export type { IsFollowerResponse } from "./model/net/response/IsFollowerResponse";
-export type { FollowResponse } from "./model/net/response/FollowResponse";
+export type { PagedUserItemResponse } from "./model/net/response/follow/PagedUserItemResponse";
+export type { UserItemCountResponse } from "./model/net/response/follow/UserItemCountResponse";
+export type { IsFollowerResponse } from "./model/net/response/follow/IsFollowerResponse";
+export type { FollowResponse } from "./model/net/response/follow/FollowResponse";
 export type { StatusItemResponse } from "./model/net/response/status/StatusItemResponse";
 
 // 

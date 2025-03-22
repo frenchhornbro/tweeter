@@ -1,4 +1,4 @@
-import { TweeterResponse } from "./TweeterResponse";
+import { TweeterResponse } from "../TweeterResponse";
 
 export interface FollowResponse extends TweeterResponse {
     followerCount: number,
