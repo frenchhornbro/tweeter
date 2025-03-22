@@ -2,7 +2,7 @@ import { handler as followeesHandler } from "../../../src/lambda/follow/userItem
 import { handler as followerCountHandler } from "../../../src/lambda/follow/count/GetFollowerCountLambda";
 import { handler as followeeCountHandler } from "../../../src/lambda/follow/count/GetFolloweeCountLambda";
 import { handler as isFollowerHandler } from "../../../src/lambda/follow/GetIsFollowerStatusLambda";
-import { handler as followHandler } from "../../../src/lambda/follow/FollowLambda";
+import { handler as followHandler } from "../../../src/lambda/follow/action/FollowLambda";
 import { handler as unfollowHandler } from "../../../src/lambda/follow/action/UnfollowLambda";
 
 describe("GetFolloweesLambda", () => {
