@@ -38,6 +38,14 @@ export class FollowService {
         return FakeData.instance.getFolloweeCount(userAlias);
     }
 
+    public async getIsFollowerStatus(
+        token: string,
+        user: UserDTO,
+        selectedUser: UserDTO
+    ): Promise<boolean> {
+        // TODO: Replace with the result of calling server
+        return FakeData.instance.isFollower();
+    }
 
     private async getFakeData(lastItem: UserDTO | null, pageSize: number, userAlias: string): Promise<[UserDTO[], boolean]> {
         const [items, hasMore] = FakeData.instance.getPageOfUsers(User.fromDTO(lastItem), pageSize, userAlias);
