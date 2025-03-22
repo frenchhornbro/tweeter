@@ -2,6 +2,7 @@ import { handler as followeesHandler } from "../../../src/lambda/follow/userItem
 import { handler as followerCountHandler } from "../../../src/lambda/follow/count/GetFollowerCountLambda";
 import { handler as followeeCountHandler } from "../../../src/lambda/follow/count/GetFolloweeCountLambda";
 import { handler as isFollowerHandler } from "../../../src/lambda/follow/GetIsFollowerStatusLambda";
+import { handler as followHandler } from "../../../src/lambda/follow/FollowLambda";
 
 describe("GetFolloweesLambda", () => {
     it("handler function works", async() => {
@@ -59,6 +60,22 @@ describe("GetIsFollowerStatusLambda", () => {
             }
         }
         const result = await isFollowerHandler(isFollowerCountRequest);
+        console.log(result);
+    });
+});
+
+describe("FollowLambda", () => {
+    it("handler function works", async() => {
+        const followRequest = {
+            token: "mytoken",
+            userToFollow: {
+                firstname: "firstname",
+                lastname: "lastname",
+                alias: "alias",
+                imageURL: "imageURL"
+            },
+        };
+        const result = await followHandler(followRequest);
         console.log(result);
     });
 });
