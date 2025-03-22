@@ -56,6 +56,15 @@ export class FollowService {
         return [followerCount, followeeCount];
     }
 
+    public async unfollow(
+        token: string,
+        userToUnfollow: UserDTO
+    ): Promise<[followerCount: number, followeeCount: number]> {
+        const followerCount = await this.getFollowerCount(token, userToUnfollow.alias);
+        const followeeCount = await this.getFolloweeCount(token, userToUnfollow.alias);
+        return [followerCount, followeeCount];
+    }
+
     private async getFakeData(lastItem: UserDTO | null, pageSize: number, userAlias: string): Promise<[UserDTO[], boolean]> {
         const [items, hasMore] = FakeData.instance.getPageOfUsers(User.fromDTO(lastItem), pageSize, userAlias);
         const dtos = items.map((user) => user.getDTO());
