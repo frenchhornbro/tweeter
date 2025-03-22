@@ -29,7 +29,16 @@ export class ServerFacade {;
     }
 
     public async follow(req: FollowRequest): Promise<[followerCount: number, followeeCount: number]> {
-        const res = await this.clientCommunicator.doPost<FollowRequest, FollowResponse>(req, '/follow');
+        return await this.followAction(req, true);
+    }
+
+    public async unfollow(req: FollowRequest): Promise<[followerCount: number, followeeCount: number]> {
+        return await this.followAction(req, false);
+    }
+
+    private async followAction(req: FollowRequest, isFollow: boolean): Promise<[followerCount: number, followeeCount: number]> {
+        const path = isFollow ? 'follow' : 'unfollow';
+        const res = await this.clientCommunicator.doPost<FollowRequest, FollowResponse>(req, `/action/${path}`);
         return this.checkForError(res, () => [res.followerCount, res.followeeCount]);
     }
 

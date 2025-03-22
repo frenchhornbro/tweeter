@@ -6,6 +6,7 @@ tweeterGetFollowers | lambda/follow/userItem/GetFollowersLambda.handler
 tweeterGetFollowerCount | lambda/follow/count/GetFollowerCountLambda.handler
 tweeterGetFolloweeCount | lambda/follow/count/GetFolloweeCountLambda.handler
 tweeterGetIsFollowerStatus | lambda/follow/GetIsFollowerStatusLambda.handler
-tweeterFollow | lambda/follow/FollowLambda.handler
+tweeterFollow | lambda/follow/action/FollowLambda.handler
+tweeterUnfollow | lambda/follow/action/UnfollowLambda.handler
 '
 LAMBDALAYER_ARN='arn:aws:lambda:us-east-1:891377292039:layer:CS340-Tweeter:6'
