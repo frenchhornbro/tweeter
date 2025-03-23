@@ -51,6 +51,7 @@ export class FollowService {
         token: string,
         userToFollow: UserDTO
     ): Promise<[followerCount: number, followeeCount: number]> {
+        // TODO: Call the server
         const followerCount = await this.getFollowerCount(token, userToFollow.alias);
         const followeeCount = await this.getFolloweeCount(token, userToFollow.alias);
         return [followerCount, followeeCount];
@@ -60,6 +61,7 @@ export class FollowService {
         token: string,
         userToUnfollow: UserDTO
     ): Promise<[followerCount: number, followeeCount: number]> {
+        // TODO: Call the server
         const followerCount = await this.getFollowerCount(token, userToUnfollow.alias);
         const followeeCount = await this.getFolloweeCount(token, userToUnfollow.alias);
         return [followerCount, followeeCount];
