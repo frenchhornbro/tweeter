@@ -1,0 +1,13 @@
+{
+    "token": "mytoken",
+    "newStatus": {
+        "post": "myPost",
+        "user": {
+            "firstname": "firstname",
+            "lastname": "lastname",
+            "alias": "alias",
+            "imageURL": "imageURL"
+        },
+        "timestamp": 12345
+    }
+}
