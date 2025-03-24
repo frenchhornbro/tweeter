@@ -1,6 +1,6 @@
 import { handler as registerHandler } from "../../../src/lambda/user/action/RegisterLambda";
 
-describe("", () => {
+describe("RegisterLambda", () => {
     it("handler function works", async() => {
         const request = {
             firstName: "firstName",
