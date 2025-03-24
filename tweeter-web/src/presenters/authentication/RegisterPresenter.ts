@@ -17,14 +17,14 @@ export class RegisterPresenter extends AuthenticationPresenter<RegisterView> {
     }
 
     public async doRegister(firstName: string, lastName: string, alias: string, password: string, imageFileExtension: string) {
-        await this.doAuthenticationOperation(() => this.userService.register(
-            firstName,
-            lastName,
-            alias,
-            password,
-            this.imageBytes,
-            imageFileExtension
-        ), () => this.view.navigate('/'), 'register user');
+        await this.doAuthenticationOperation(() => this.serverFacade.register({
+            firstName: firstName,
+            lastName: lastName,
+            alias: alias,
+            password: password,
+            userImageBytes: this.imageBytes,
+            imageFileExtension: imageFileExtension
+        }), () => this.view.navigate('/'), 'register user');
     }
 
     // Arrow syntax preserves `this`

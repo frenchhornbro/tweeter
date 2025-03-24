@@ -1,4 +1,4 @@
-import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse, FollowRequest, FollowResponse, StatusItemRequest, StatusItemResponse, Status, PostStatusRequest } from "tweeter-shared";
+import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse, FollowRequest, FollowResponse, StatusItemRequest, StatusItemResponse, Status, PostStatusRequest, RegisterRequest, RegisterResponse, AuthToken } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
@@ -57,6 +57,15 @@ export class ServerFacade {;
     public async postStatus(req: PostStatusRequest): Promise<void> {
         const res = await this.clientCommunicator.doPost<PostStatusRequest, TweeterResponse>(req, '/post-status');
         this.checkForError(res, () => {});
+    }
+    
+    public async register(req: RegisterRequest): Promise<[User, AuthToken]> {
+        const res = await this.clientCommunicator.doPost<RegisterRequest, RegisterResponse>(req, '/action/register');
+        const user: User = User.fromDTO(res.user) as User;
+        const authToken: AuthToken = new AuthToken(res.token, res.timestamp);
+        return this.checkForError(res, () => {
+            return [user, authToken];
+        });
     }
 
     private async followAction(req: FollowRequest, isFollow: boolean): Promise<[followerCount: number, followeeCount: number]> {
