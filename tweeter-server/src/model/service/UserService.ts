@@ -25,4 +25,9 @@ export class UserService {
         if (user === null) throw new Error("Invalid alias or password");
         return [user.getDTO(), FakeData.instance.authToken.token, FakeData.instance.authToken.timestamp];
     }
+
+    public async logout(token: string): Promise<void> {
+        // TODO: Implement logout
+        return;
+    };
 }

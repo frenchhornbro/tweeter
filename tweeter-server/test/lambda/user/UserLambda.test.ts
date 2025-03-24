@@ -1,5 +1,6 @@
 import { handler as registerHandler } from "../../../src/lambda/user/action/RegisterLambda";
 import { handler as loginHandler } from "../../../src/lambda/user/action/LoginLambda";
+import { handler as logoutHandler } from "../../../src/lambda/user/action/LogoutLambda";
 
 describe("RegisterLambda", () => {
     it("handler function works", async() => {
@@ -23,6 +24,16 @@ describe("LoginLambda", () => {
             "password": "mypassword"
         };
         const res = await loginHandler(request);
+        console.log(res);
+    });
+});
+
+describe("LogoutLambda", () => {
+    it("handler function works", async() => {
+        const request = {
+            "token": "myauthtoken"
+        }
+        const res = await logoutHandler(request);
         console.log(res);
     });
 });
