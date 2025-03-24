@@ -1,13 +1,14 @@
 import { anything, capture, instance, mock, spy, verify, when } from "@typestrong/ts-mockito";
 import { PostStatusPresenter, PostStatusView } from "../../../src/presenters/postStatus/PostStatusPresenter";
-import { StatusService } from "../../../src/model/service/StatusService";
 import { AuthToken, User } from "tweeter-shared";
+import { ServerFacade } from "../../../src/model/network/ServerFacade";
 import React from "react";
+import "isomorphic-fetch";
 
 describe('PostStatusPresenter', () => {
     let mockPostStatusView: PostStatusView;
     let postStatusPresenter: PostStatusPresenter;
-    let mockStatusService: StatusService;
+    let mockServerFacade: ServerFacade;
     const event = {preventDefault: () => {}} as React.MouseEvent;
     const post: string = "This is my test post";
     const currentUser: User = new User('first', 'last', 'alias', 'imageURL');
@@ -18,10 +19,11 @@ describe('PostStatusPresenter', () => {
         const mockPostStatusViewInstance = instance(mockPostStatusView);
         const postStatusPresenterSpy = spy(new PostStatusPresenter(mockPostStatusViewInstance));
         postStatusPresenter = instance(postStatusPresenterSpy);
-        mockStatusService = mock<StatusService>();
-        const mockStatusServiceInstance = instance(mockStatusService);
 
-        when(postStatusPresenterSpy.statusService).thenReturn(mockStatusServiceInstance);
+        mockServerFacade = mock<ServerFacade>();
+        const mockServerFacadeInstance = instance(mockServerFacade);
+        
+        when(postStatusPresenterSpy.serverFacade).thenReturn(mockServerFacadeInstance);
     });
 
     it('tells the view to display a posting status message', async () => {
@@ -31,9 +33,9 @@ describe('PostStatusPresenter', () => {
 
     it('call postStatus on the post status service with the correct string and auth token', async () => {
         await postStatusPresenter.submitPost(event, post, currentUser, authToken);
-        const [capturedAuthToken, capturedStatus] = capture(mockStatusService.postStatus).last();
-        expect(capturedAuthToken).toBe(authToken);
-        expect(capturedStatus.post).toBe(post);
+        const [params] = capture(mockServerFacade.postStatus).last();
+        expect(params.token).toBe(authToken.token);
+        expect(params.newStatus.post).toBe(post);
     });
 
     it('tells the view to clear the last info message, clear the post, and display a status posted message ' +
@@ -47,7 +49,7 @@ describe('PostStatusPresenter', () => {
     it('tells the view to display an error message and clear the last info message and does not tell it to '+
         'clear the post or display a status posted message when postStatus fails', async () => {
         const error = new Error('test error');
-        when(mockStatusService.postStatus(anything(), anything())).thenThrow(error);
+        when(mockServerFacade.postStatus(anything())).thenReject(error);
         await postStatusPresenter.submitPost(event, post, currentUser, authToken);
         verify(mockPostStatusView.displayErrorMessage("Failed to post the status because of exception: test error")).once();
         verify(mockPostStatusView.clearLastInfoMessage()).once();

@@ -22,7 +22,8 @@ export abstract class Presenter<V extends View> {
         return this._view;
     }
     
-    protected get serverFacade(): ServerFacade {
+    public get serverFacade(): ServerFacade {
+        // This is public to allow for overwriting in testing
         return this._serverFacade;
     }
 
