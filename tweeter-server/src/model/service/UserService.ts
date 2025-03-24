@@ -18,4 +18,11 @@ export class UserService {
         if (user === null) throw new Error("Invalid registration");
         return [user.getDTO(), FakeData.instance.authToken.token, FakeData.instance.authToken.timestamp];
     }
+
+    public async login(alias: string, password: string): Promise<[UserDTO, string, number]> {
+        // TODO: Replace with the result of calling the server
+        const user = FakeData.instance.firstUser;
+        if (user === null) throw new Error("Invalid alias or password");
+        return [user.getDTO(), FakeData.instance.authToken.token, FakeData.instance.authToken.timestamp];
+    }
 }
