@@ -20,6 +20,7 @@ export type { StatusDTO } from "./model/dto/StatusDTO";
 // Requests
 // 
 export type { TweeterRequest } from "./model/net/request/TweeterRequest";
+export type { AuthenticatedRequest } from "./model/net/request/AuthenticatedRequest";
 export type { PagedUserItemRequest } from "./model/net/request/follow/PagedUserItemRequest";
 export type { UserItemCountRequest } from "./model/net/request/follow/UserItemCountRequest";
 export type { IsFollowerRequest } from "./model/net/request/follow/IsFollowerRequest";

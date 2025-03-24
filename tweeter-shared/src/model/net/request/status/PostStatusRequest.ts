@@ -1,7 +1,6 @@
 import { StatusDTO } from "../../../dto/StatusDTO";
-import { TweeterRequest } from "../TweeterRequest";
+import { AuthenticatedRequest } from "../AuthenticatedRequest";
 
-export interface PostStatusRequest extends TweeterRequest {
-    token: string,
-    newStatus: StatusDTO
+export interface PostStatusRequest extends AuthenticatedRequest {
+    newStatus: StatusDTO;
 }

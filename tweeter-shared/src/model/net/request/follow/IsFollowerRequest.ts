@@ -1,8 +1,7 @@
 import { UserDTO } from "../../../dto/UserDTO";
-import { TweeterRequest } from "../TweeterRequest";
+import { AuthenticatedRequest } from "../AuthenticatedRequest";
 
-export interface IsFollowerRequest extends TweeterRequest {
-    readonly token: string,
-    readonly user: UserDTO,
-    readonly selectedUser: UserDTO
+export interface IsFollowerRequest extends AuthenticatedRequest {
+    readonly user: UserDTO;
+    readonly selectedUser: UserDTO;
 }
