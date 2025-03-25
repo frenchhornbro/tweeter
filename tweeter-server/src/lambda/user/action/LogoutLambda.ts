@@ -1,11 +1,8 @@
 import { AuthenticatedRequest, TweeterResponse } from "tweeter-shared";
 import { UserService } from "../../../model/service/UserService";
+import { superHandler } from "../../BlankResponseLambda";
 
 export const handler = async(request: AuthenticatedRequest): Promise<TweeterResponse> => {
     const userService: UserService = new UserService();
-    await userService.logout(request.token);
-    return {
-        success: true,
-        message: null
-    }
+    return await superHandler(userService, userService.logout, request.token);
 };
