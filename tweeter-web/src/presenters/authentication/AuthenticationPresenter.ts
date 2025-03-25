@@ -1,5 +1,4 @@
 import { AuthToken, User } from "tweeter-shared";
-import { UserService } from "../../model/service/UserService";
 import { Presenter, View } from "../Presenter";
 import { NavigateFunction } from "react-router-dom";
 
@@ -10,12 +9,7 @@ export interface AuthenticationView extends View {
 }
 
 export abstract class AuthenticationPresenter<V extends AuthenticationView> extends Presenter<V> {
-    private _userService: UserService;
     private _rememberMe: boolean = false;
-    
-    public get userService(): UserService {
-        return this._userService;
-    }
 
     public get rememberMe() {
         return this._rememberMe;
@@ -27,15 +21,12 @@ export abstract class AuthenticationPresenter<V extends AuthenticationView> exte
 
     protected constructor(view: V) {
         super(view);
-        this._userService = new UserService();
     }
 
     protected async doAuthenticationOperation(authRequest: () => Promise<[User, AuthToken]>, doNavigation: () => void, authDescription: string) {
         await this.doFailureReportingOperation(async () => {
             this.view.setIsLoading(true);
-
             const [user, authToken] = await authRequest();
-
             this.view.updateUserInfo(user, user, authToken, this.rememberMe);
 
             doNavigation();

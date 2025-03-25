@@ -1,8 +1,7 @@
 import { AuthToken, Status } from "tweeter-shared";
-import { StatusItemPresenter } from "./StatusItemPresenter";
-import { PAGE_SIZE } from "../PagedItemPresenter";
+import { PAGE_SIZE, PagedItemPresenter } from "../PagedItemPresenter";
 
-export class FeedPresenter extends StatusItemPresenter {
+export class FeedPresenter extends PagedItemPresenter<Status> {
     protected getMoreItems(authToken: AuthToken, userAlias: string): Promise<[Status[], boolean]> {
         return this.serverFacade.loadMoreFeedItems({
             token: authToken.token,

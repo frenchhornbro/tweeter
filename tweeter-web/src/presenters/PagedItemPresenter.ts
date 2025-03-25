@@ -7,18 +7,12 @@ export interface PagedItemView<T> extends View {
     addItems: (newItems: T[]) => void;
 }
 
-export abstract class PagedItemPresenter<T, U> extends Presenter<PagedItemView<T>> {
-    private _service: U;
+export abstract class PagedItemPresenter<T> extends Presenter<PagedItemView<T>> {
     private _hasMoreItems: boolean = true;
     private _lastItem: T | null = null;
     
     public constructor(view: PagedItemView<T>) {
         super(view);
-        this._service = this.createService();
-    }
-
-    public get service(): U {
-        return this._service;
     }
 
     public get hasMoreItems(): boolean {
@@ -36,8 +30,6 @@ export abstract class PagedItemPresenter<T, U> extends Presenter<PagedItemView<T
     protected set lastItem(value: T | null) {
         this._lastItem = value;
     }
-    
-    protected abstract createService(): U;
     
     protected abstract getItemDescription(): string;
 

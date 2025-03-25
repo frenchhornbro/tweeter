@@ -1,8 +1,7 @@
 import { AuthToken, User } from "tweeter-shared";
-import { UserItemPresenter } from "./UserItemPresenter";
-import { PAGE_SIZE } from "../PagedItemPresenter";
+import { PAGE_SIZE, PagedItemPresenter } from "../PagedItemPresenter";
 
-export class FollowerPresenter extends UserItemPresenter {
+export class FollowerPresenter extends PagedItemPresenter<User> {
     protected getMoreItems(authToken: AuthToken, userAlias: string): Promise<[User[], boolean]> {
         return this.serverFacade.getMoreFollowers({
             token: authToken.token,

@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { UserItemPresenter } from "../../presenters/userItem/UserItemPresenter";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
-import { PagedItemView } from "../../presenters/PagedItemPresenter";
+import { PagedItemPresenter, PagedItemView } from "../../presenters/PagedItemPresenter";
 import { Status, User } from "tweeter-shared";
-import { StatusItemPresenter } from "../../presenters/statusItem/StatusItemPresenter";
 
-interface Props<T extends User | Status, U extends UserItemPresenter | StatusItemPresenter> {
-  presenterGenerator: (view: PagedItemView<T>) => U;
+interface Props<T extends User | Status> {
+  presenterGenerator: (view: PagedItemView<T>) => PagedItemPresenter<T>;
   itemGenerator: (item: T) => JSX.Element;
 }
 
-const ItemScroller = <T extends User | Status, U extends UserItemPresenter | StatusItemPresenter>(props: Props<T, U>) => {
+const ItemScroller = <T extends User | Status>(props: Props<T>) => {
     const { displayErrorMessage } = useToastListener();
     const [items, setItems] = useState<T[]>([]);
     const [newItems, setNewItems] = useState<T[]>([]);
