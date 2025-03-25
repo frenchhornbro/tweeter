@@ -1,4 +1,7 @@
-import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse, FollowRequest, FollowResponse, StatusItemRequest, StatusItemResponse, Status, PostStatusRequest, RegisterRequest, RegisterResponse, AuthToken, LoginRequest, LoginResponse, AuthenticatedRequest, TweeterRequest, GetUserRequest, GetUserResponse } from "tweeter-shared";
+import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse,
+    FollowRequest, FollowResponse, StatusItemRequest, StatusItemResponse, Status, PostStatusRequest, RegisterRequest, AuthToken, LoginRequest, AuthenticatedRequest,
+    GetUserRequest, GetUserResponse, 
+    AuthenticationResponse} from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
@@ -60,7 +63,7 @@ export class ServerFacade {;
     }
     
     public async register(req: RegisterRequest): Promise<[User, AuthToken]> {
-        const res = await this.clientCommunicator.doPost<RegisterRequest, RegisterResponse>(req, '/action/register');
+        const res = await this.clientCommunicator.doPost<RegisterRequest, AuthenticationResponse>(req, '/action/register');
         const user: User = User.fromDTO(res.user) as User;
         const authToken: AuthToken = new AuthToken(res.token, res.timestamp);
         return this.checkForError(res, () => {
@@ -69,7 +72,7 @@ export class ServerFacade {;
     }
 
     public async login(req: LoginRequest): Promise<[User, AuthToken]> {
-        const res = await this.clientCommunicator.doPost<LoginRequest, LoginResponse>(req, '/action/login');
+        const res = await this.clientCommunicator.doPost<LoginRequest, AuthenticationResponse>(req, '/action/login');
         const user: User = User.fromDTO(res.user) as User;
         const authToken: AuthToken = new AuthToken(res.token, res.timestamp);
         return this.checkForError(res, () => {

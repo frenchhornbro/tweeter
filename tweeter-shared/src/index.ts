@@ -40,8 +40,7 @@ export type { UserItemCountResponse } from "./model/net/response/follow/UserItem
 export type { IsFollowerResponse } from "./model/net/response/follow/IsFollowerResponse";
 export type { FollowResponse } from "./model/net/response/follow/FollowResponse";
 export type { StatusItemResponse } from "./model/net/response/status/StatusItemResponse";
-export type { RegisterResponse } from "./model/net/response/user/RegisterResponse";
-export type { LoginResponse } from "./model/net/response/user/LoginResponse";
+export type { AuthenticationResponse } from "./model/net/response/user/AuthenticationResponse";
 export type { GetUserResponse } from "./model/net/response/user/GetUserResponse";
 
 // 
