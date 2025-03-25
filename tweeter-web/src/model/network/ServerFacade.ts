@@ -1,7 +1,6 @@
 import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse,
-    FollowRequest, FollowResponse, StatusItemRequest, StatusItemResponse, Status, PostStatusRequest, RegisterRequest, AuthToken, LoginRequest, AuthenticatedRequest,
-    GetUserRequest, GetUserResponse, 
-    AuthenticationResponse} from "tweeter-shared";
+    FollowRequest, FollowResponse, StatusItemRequest, StatusItemResponse, Status, PostStatusRequest, RegisterRequest, AuthToken, AuthenticatedRequest,
+    GetUserRequest, GetUserResponse, AuthenticationResponse, AuthenticationRequest} from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
@@ -71,8 +70,8 @@ export class ServerFacade {;
         });
     }
 
-    public async login(req: LoginRequest): Promise<[User, AuthToken]> {
-        const res = await this.clientCommunicator.doPost<LoginRequest, AuthenticationResponse>(req, '/action/login');
+    public async login(req: AuthenticationRequest): Promise<[User, AuthToken]> {
+        const res = await this.clientCommunicator.doPost<AuthenticationRequest, AuthenticationResponse>(req, '/action/login');
         const user: User = User.fromDTO(res.user) as User;
         const authToken: AuthToken = new AuthToken(res.token, res.timestamp);
         return this.checkForError(res, () => {

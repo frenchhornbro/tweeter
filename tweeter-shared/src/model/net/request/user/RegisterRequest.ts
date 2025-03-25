@@ -1,10 +1,8 @@
-import { TweeterRequest } from "../TweeterRequest";
+import { AuthenticationRequest } from "./AuthenticationRequest";
 
-export interface RegisterRequest extends TweeterRequest {
+export interface RegisterRequest extends AuthenticationRequest {
     firstName: string;
     lastName: string;
-    alias: string;
-    password: string;
     userImageBytes: Uint8Array;
     imageFileExtension: string;
 }

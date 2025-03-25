@@ -28,7 +28,7 @@ export type { FollowRequest } from "./model/net/request/follow/FollowRequest";
 export type { StatusItemRequest } from "./model/net/request/status/StatusItemRequest";
 export type { PostStatusRequest } from "./model/net/request/status/PostStatusRequest";
 export type { RegisterRequest } from "./model/net/request/user/RegisterRequest";
-export type { LoginRequest } from "./model/net/request/user/LoginRequest";
+export type { AuthenticationRequest } from "./model/net/request/user/AuthenticationRequest";
 export type { GetUserRequest } from "./model/net/request/user/GetUserRequest";
 
 // 
