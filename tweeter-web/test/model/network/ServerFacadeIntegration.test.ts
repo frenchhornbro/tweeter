@@ -67,6 +67,27 @@ describe("LoadMoreStoryItems", () => {
         expect(items).toStrictEqual(expItems);
         expect(hasMore).toBe(expHasMore);
     });
+    
+    it("returns the correct starting point", async() => {
+        const differentStartReq: PagedItemRequest<StatusDTO> = {
+            token: "mytoken",
+            userAlias: "myAlias",
+            pageSize: 12345,
+            lastItem: {
+                "post": "Post 1 14\n        My friend @helen likes this website: http://byu.edu. Do you? \n        Or do you prefer this one: http://cs.byu.edu?",
+                "user": {
+                    "firstname": "Henry",
+                    "lastname": "Henderson",
+                    "alias": "@henry",
+                    "imageURL": "https://faculty.cs.byu.edu/~jwilkerson/cs340/tweeter/images/donald_duck.png"
+                },
+                "timestamp": 1080000000000
+            }
+        }
+        const [differentStartItems] = await serverFacade.loadMoreStoryItems(differentStartReq);
+        const [expItems] = FakeData.instance.getPageOfStatuses(Status.fromDTO(differentStartReq.lastItem), req.pageSize);
+        expect(differentStartItems).toStrictEqual(expItems);
+    });
 });
 
 describe("Register", () => {
