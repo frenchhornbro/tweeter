@@ -1,6 +1,6 @@
 import { TweeterRequest } from "../TweeterRequest";
 
 export interface AuthenticationRequest extends TweeterRequest {
-    alias: string;
-    password: string;
+    readonly alias: string;
+    readonly password: string;
 }
