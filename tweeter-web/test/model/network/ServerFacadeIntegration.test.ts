@@ -1,6 +1,7 @@
-import { FakeData, UserItemCountRequest, PagedUserItemRequest, User, StatusItemRequest, Status } from "tweeter-shared";
+import { FakeData, UserItemCountRequest, PagedUserItemRequest, User, StatusItemRequest, Status, RegisterRequest, AuthToken } from "tweeter-shared";
 import { ServerFacade } from "../../../src/model/network/ServerFacade";
-import "isomorphic-fetch"
+import { Buffer } from "buffer";
+import "isomorphic-fetch";
 
 const serverFacade = new ServerFacade();
 
@@ -65,5 +66,30 @@ describe("LoadMoreStoryItems", () => {
         const [expItems, expHasMore] = FakeData.instance.getPageOfStatuses(Status.fromDTO(req.lastItem), req.pageSize);
         expect(items).toStrictEqual(expItems);
         expect(hasMore).toBe(expHasMore);
+    });
+});
+
+describe("Register", () => {
+    const req: RegisterRequest = {
+        firstName: "firstNameTest",
+        lastName: "lastNameTest",
+        alias: "aliasTest",
+        password: "passwordTest",
+        userImageBytes: Buffer.from([1, 2, 3, 4, 5]),
+        imageFileExtension: "imgFileExtTest"
+    };
+    let user: User;
+    let authToken: AuthToken;
+    beforeAll(async() => {
+        [user, authToken] = await serverFacade.register(req);
+    });
+
+    it("returns the correct FakeData user", () => {
+        expect(user).toStrictEqual(FakeData.instance.firstUser);
+    });
+
+    it("returns a defined auth token", () => {
+        expect(authToken).toBeDefined();
+        expect(authToken).not.toBeNull();
     });
 });
