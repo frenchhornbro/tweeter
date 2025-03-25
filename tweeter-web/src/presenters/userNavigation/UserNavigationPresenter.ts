@@ -1,11 +1,14 @@
 import { User, AuthToken } from "tweeter-shared";
 import { Presenter, View } from "../Presenter";
+import { UserService } from "../../model/service/UserService";
 
 export interface UserNavigationView extends View {
     setDisplayedUser: (user: User) => void;
 }
 
 export class UserNavigationPresenter extends Presenter<UserNavigationView> {
+    private userService = new UserService();
+
     public constructor(view: UserNavigationView) {
         super(view);
     }
@@ -18,7 +21,7 @@ export class UserNavigationPresenter extends Presenter<UserNavigationView> {
         event.preventDefault();
         await this.doFailureReportingOperation(async () => {
             const alias = this.extractAlias(event.target.toString());
-            const user = await this.serverFacade.getUser({
+            const user = await this.userService.getUser({
                 token: authToken === null ? "" : authToken.token,
                 alias: alias
             });

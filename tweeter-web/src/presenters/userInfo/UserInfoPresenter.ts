@@ -1,5 +1,6 @@
 import { AuthToken, User } from "tweeter-shared";
 import { MessageView, Presenter } from "../Presenter";
+import { FollowService } from "../../model/service/FollowService";
 
 export interface UserInfoView extends MessageView {
     setIsFollower: (isFollower: boolean) => void;
@@ -9,6 +10,8 @@ export interface UserInfoView extends MessageView {
 }
 
 export class UserInfoPresenter extends Presenter<UserInfoView> {
+    private followService = new FollowService();
+
     public constructor(view: UserInfoView) {
         super(view);
     }
@@ -18,7 +21,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
             if (currentUser === displayedUser) {
                 this.view.setIsFollower(false);
             } else {
-                this.view.setIsFollower(await this.serverFacade.getIsFollowerStatus({
+                this.view.setIsFollower(await this.followService.getIsFollowerStatus({
                     token: authToken.token,
                     user: currentUser.getDTO(),
                     selectedUser: displayedUser.getDTO()}));
@@ -28,7 +31,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
 
     public async setNumbFollowees(authToken: AuthToken, displayedUser: User) {
         await this.doFailureReportingOperation(async () => {
-            this.view.setFolloweeCount(await this.serverFacade.getFolloweeCount({
+            this.view.setFolloweeCount(await this.followService.getFolloweeCount({
                 token: authToken.token,
                 userAlias: displayedUser.alias
             }));
@@ -37,7 +40,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
 
     public async setNumbFollowers(authToken: AuthToken, displayedUser: User) {
         await this.doFailureReportingOperation(async () => {
-            this.view.setFollowerCount(await this.serverFacade.getFollowerCount({
+            this.view.setFollowerCount(await this.followService.getFollowerCount({
                 token: authToken.token,
                 userAlias: displayedUser.alias
             }));
@@ -51,7 +54,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
             this.view.setIsLoading(true);
             this.view.displayInfoMessage(`Following ${displayedUser!.name}...`, 0);
 
-            const [followerCount, followeeCount] = await this.serverFacade.follow({
+            const [followerCount, followeeCount] = await this.followService.follow({
                 token: authToken.token,
                 userToFollow: displayedUser.getDTO()
         });
@@ -72,7 +75,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
             this.view.setIsLoading(true);
             this.view.displayInfoMessage(`Unfollowing ${displayedUser!.name}...`, 0);
 
-            const [followerCount, followeeCount] = await this.serverFacade.unfollow({
+            const [followerCount, followeeCount] = await this.followService.unfollow({
                 token: authToken.token,
                 userToFollow: displayedUser.getDTO()
             });

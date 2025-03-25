@@ -1,5 +1,6 @@
 import { AuthToken, Status, User } from "tweeter-shared";
 import { MessageView, Presenter } from "../Presenter";
+import { StatusService } from "../../model/service/StatusService";
 
 export interface PostStatusView extends MessageView {
     setIsLoading: (isLoading: boolean) => void;
@@ -7,6 +8,8 @@ export interface PostStatusView extends MessageView {
 }
 
 export class PostStatusPresenter extends Presenter<PostStatusView> {
+    public statusService = new StatusService();
+    
     public constructor(view: PostStatusView) {
         super(view);
     }
@@ -20,7 +23,7 @@ export class PostStatusPresenter extends Presenter<PostStatusView> {
 
             const status = new Status(post, currentUser!, Date.now());
             console.log("about to call postStatus");
-            await this.serverFacade.postStatus({
+            await this.statusService.postStatus({
                 token: authToken.token,
                 newStatus: status.getDTO()
             });

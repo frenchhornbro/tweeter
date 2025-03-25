@@ -24,6 +24,7 @@ describe("GetFollowers", () => {
 
     it("gets the correct FakeData over the network", () => {
         const [expItems, expHasMore] = FakeData.instance.getPageOfUsers(User.fromDTO(req.lastItem), req.pageSize, req.userAlias);
+        console.log(items);
         expect(items).toStrictEqual(expItems);
         expect(hasMore).toBe(expHasMore);
     });

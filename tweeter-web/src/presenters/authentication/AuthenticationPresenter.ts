@@ -1,6 +1,7 @@
 import { AuthToken, User } from "tweeter-shared";
 import { Presenter, View } from "../Presenter";
 import { NavigateFunction } from "react-router-dom";
+import { UserService } from "../../model/service/UserService";
 
 export interface AuthenticationView extends View {
     navigate: NavigateFunction;
@@ -10,6 +11,7 @@ export interface AuthenticationView extends View {
 
 export abstract class AuthenticationPresenter<V extends AuthenticationView> extends Presenter<V> {
     private _rememberMe: boolean = false;
+    private _userService = new UserService();
 
     public get rememberMe() {
         return this._rememberMe;
@@ -17,6 +19,10 @@ export abstract class AuthenticationPresenter<V extends AuthenticationView> exte
 
     public set rememberMe(value) {
         this._rememberMe = value;
+    }
+
+    protected get userService() {
+        return this._userService;
     }
 
     protected constructor(view: V) {

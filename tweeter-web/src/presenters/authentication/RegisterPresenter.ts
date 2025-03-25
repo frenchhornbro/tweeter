@@ -17,7 +17,7 @@ export class RegisterPresenter extends AuthenticationPresenter<RegisterView> {
     }
 
     public async doRegister(firstName: string, lastName: string, alias: string, password: string, imageFileExtension: string) {
-        await this.doAuthenticationOperation(() => this.serverFacade.register({
+        await this.doAuthenticationOperation(() => this.userService.register({
             firstName: firstName,
             lastName: lastName,
             alias: alias,
