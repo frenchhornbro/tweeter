@@ -6,7 +6,7 @@ import {
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
-export class ServerFacade {;
+export class ServerFacade {
     private clientCommunicator = new ClientCommunicator(SERVER_URL);
 
     public async getMoreFollowees(req: PagedItemRequest<UserDTO>): Promise<[User[], boolean]> {
@@ -15,6 +15,30 @@ export class ServerFacade {;
 
     public async getMoreFollowers(req: PagedItemRequest<UserDTO>): Promise<[User[], boolean]> {
         return await this.getMoreUserItems(req, 'follower', 'followers');
+    }
+
+    public async loadMoreFeedItems(req: PagedItemRequest<StatusDTO>): Promise<[Status[], boolean]> {
+        return await this.getMoreStatusItems(req, 'feed', 'feed');
+    }
+    
+    public async loadMoreStoryItems(req: PagedItemRequest<StatusDTO>): Promise<[Status[], boolean]> {
+        return await this.getMoreStatusItems(req, 'story', 'story');
+    }
+
+    public async follow(req: FollowRequest): Promise<[followerCount: number, followeeCount: number]> {
+        return await this.followAction(req, 'follow');
+    }
+
+    public async unfollow(req: FollowRequest): Promise<[followerCount: number, followeeCount: number]> {
+        return await this.followAction(req, 'unfollow');
+    }
+    
+    public async register(req: RegisterRequest): Promise<[User, AuthToken]> {
+        return await this.authenticate(req, 'register');
+    }
+    
+    public async login(req: AuthenticationRequest): Promise<[User, AuthToken]> {
+        return await this.authenticate(req, 'login');
     }
 
     public async getFollowerCount(req: UserItemCountRequest): Promise<number> {
@@ -32,53 +56,9 @@ export class ServerFacade {;
         return this.checkForError(res, () => res.isFollower);
     }
 
-    public async follow(req: FollowRequest): Promise<[followerCount: number, followeeCount: number]> {
-        return await this.followAction(req, true);
-    }
-
-    public async unfollow(req: FollowRequest): Promise<[followerCount: number, followeeCount: number]> {
-        return await this.followAction(req, false);
-    }
-
-    public async loadMoreFeedItems(req: PagedItemRequest<StatusDTO>): Promise<[Status[], boolean]> {
-        const res = await this.clientCommunicator.doPost<PagedItemRequest<StatusDTO>, PagedItemResponse<StatusDTO>>(req, '/load/feed');
-        const items: Status[] | null = res.success && res.items ? res.items.map((dto) => Status.fromDTO(dto) as Status) : null;
-        return this.checkForError(res, () => {
-            if (items === null) throw new Error('No feed items found');
-            else return [items, res.hasMore];
-        });
-    }
-
-    public async loadMoreStoryItems(req: PagedItemRequest<StatusDTO>): Promise<[Status[], boolean]> {
-        const res = await this.clientCommunicator.doPost<PagedItemRequest<StatusDTO>, PagedItemResponse<StatusDTO>>(req, '/load/story');
-        const items: Status[] | null = res.success && res.items ? res.items.map((dto) => Status.fromDTO(dto) as Status) : null;
-        return this.checkForError(res, () => {
-            if (items === null) throw new Error('No feed items found');
-            else return [items, res.hasMore];
-        });
-    }
-
     public async postStatus(req: PostStatusRequest): Promise<void> {
         const res = await this.clientCommunicator.doPost<PostStatusRequest, TweeterResponse>(req, '/post-status');
         this.checkForError(res, () => {});
-    }
-    
-    public async register(req: RegisterRequest): Promise<[User, AuthToken]> {
-        const res = await this.clientCommunicator.doPost<RegisterRequest, AuthenticationResponse>(req, '/action/register');
-        const user: User = User.fromDTO(res.user) as User;
-        const authToken: AuthToken = new AuthToken(res.token, res.timestamp);
-        return this.checkForError(res, () => {
-            return [user, authToken];
-        });
-    }
-
-    public async login(req: AuthenticationRequest): Promise<[User, AuthToken]> {
-        const res = await this.clientCommunicator.doPost<AuthenticationRequest, AuthenticationResponse>(req, '/action/login');
-        const user: User = User.fromDTO(res.user) as User;
-        const authToken: AuthToken = new AuthToken(res.token, res.timestamp);
-        return this.checkForError(res, () => {
-            return [user, authToken];
-        });
     }
 
     public async logout(req: AuthenticatedRequest): Promise<void> {
@@ -92,18 +72,35 @@ export class ServerFacade {;
         return this.checkForError(res, () => user);
     }
 
-    private async followAction(req: FollowRequest, isFollow: boolean): Promise<[followerCount: number, followeeCount: number]> {
-        const path = isFollow ? 'follow' : 'unfollow';
+    private async followAction(req: FollowRequest, path: string): Promise<[followerCount: number, followeeCount: number]> {
         const res = await this.clientCommunicator.doPost<FollowRequest, FollowResponse>(req, `/action/${path}`);
         return this.checkForError(res, () => [res.followerCount, res.followeeCount]);
     }
 
     private async getMoreUserItems(req: PagedItemRequest<UserDTO>, path: string, userItemType: string): Promise<[User[], boolean]> {
         const res = await this.clientCommunicator.doPost<PagedItemRequest<UserDTO>, PagedItemResponse<UserDTO>>(req, `/${path}/list`);
-        const items: User[] | null = res.success && res.items ? res.items.map((dto) => User.fromDTO(dto) as User) : null;
+        return this.getMoreItems(res, User.fromDTO, userItemType);
+    }
+
+    private async getMoreStatusItems(req: PagedItemRequest<StatusDTO>, path: string, statusItemType: string): Promise<[Status[], boolean]> {
+        const res = await this.clientCommunicator.doPost<PagedItemRequest<StatusDTO>, PagedItemResponse<StatusDTO>>(req, `/load/${path}`);
+        return this.getMoreItems(res, Status.fromDTO, statusItemType);
+    }
+    
+    private async getMoreItems<T extends StatusDTO | UserDTO, U extends Status | User>(res: PagedItemResponse<T>, fromDTO: (dto: T | null) => U | null, itemType: string) {
+        const items: U[] | null = res.success && res.items ? res.items.map((dto) => fromDTO(dto) as U) : null;
         return this.checkForError(res, () => {
-            if (items === null) throw new Error(`No ${userItemType} found`);
+            if (items === null) throw new Error(`No ${itemType} items found`);
             else return [items, res.hasMore];
+        });
+    }
+
+    private async authenticate(req: AuthenticationRequest, path: string): Promise<[User, AuthToken]> {
+        const res = await this.clientCommunicator.doPost<AuthenticationRequest, AuthenticationResponse>(req, `/action/${path}`);
+        const user: User = User.fromDTO(res.user) as User;
+        const authToken: AuthToken = new AuthToken(res.token, res.timestamp);
+        return this.checkForError(res, () => {
+            return [user, authToken];
         });
     }
 
