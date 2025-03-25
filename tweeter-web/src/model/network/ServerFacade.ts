@@ -1,9 +1,8 @@
-import { UserItemCountRequest, UserItemCountResponse, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse,
-    FollowRequest, FollowResponse, StatusItemResponse, Status, PostStatusRequest, RegisterRequest, AuthToken, AuthenticatedRequest,
-    GetUserRequest, GetUserResponse, AuthenticationResponse, AuthenticationRequest,
-    PagedItemRequest,
-    UserDTO,
-    StatusDTO} from "tweeter-shared";
+import {
+    UserItemCountRequest, UserItemCountResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse, FollowRequest, FollowResponse, Status,
+    PostStatusRequest, RegisterRequest, AuthToken, AuthenticatedRequest, GetUserRequest, GetUserResponse, AuthenticationResponse, AuthenticationRequest,
+    PagedItemRequest, UserDTO, StatusDTO, PagedItemResponse
+} from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
@@ -42,7 +41,7 @@ export class ServerFacade {;
     }
 
     public async loadMoreFeedItems(req: PagedItemRequest<StatusDTO>): Promise<[Status[], boolean]> {
-        const res = await this.clientCommunicator.doPost<PagedItemRequest<StatusDTO>, StatusItemResponse>(req, '/load/feed');
+        const res = await this.clientCommunicator.doPost<PagedItemRequest<StatusDTO>, PagedItemResponse<StatusDTO>>(req, '/load/feed');
         const items: Status[] | null = res.success && res.items ? res.items.map((dto) => Status.fromDTO(dto) as Status) : null;
         return this.checkForError(res, () => {
             if (items === null) throw new Error('No feed items found');
@@ -51,7 +50,7 @@ export class ServerFacade {;
     }
 
     public async loadMoreStoryItems(req: PagedItemRequest<StatusDTO>): Promise<[Status[], boolean]> {
-        const res = await this.clientCommunicator.doPost<PagedItemRequest<StatusDTO>, StatusItemResponse>(req, '/load/story');
+        const res = await this.clientCommunicator.doPost<PagedItemRequest<StatusDTO>, PagedItemResponse<StatusDTO>>(req, '/load/story');
         const items: Status[] | null = res.success && res.items ? res.items.map((dto) => Status.fromDTO(dto) as Status) : null;
         return this.checkForError(res, () => {
             if (items === null) throw new Error('No feed items found');
@@ -100,7 +99,7 @@ export class ServerFacade {;
     }
 
     private async getMoreUserItems(req: PagedItemRequest<UserDTO>, path: string, userItemType: string): Promise<[User[], boolean]> {
-        const res = await this.clientCommunicator.doPost<PagedItemRequest<UserDTO>, PagedUserItemResponse>(req, `/${path}/list`);
+        const res = await this.clientCommunicator.doPost<PagedItemRequest<UserDTO>, PagedItemResponse<UserDTO>>(req, `/${path}/list`);
         const items: User[] | null = res.success && res.items ? res.items.map((dto) => User.fromDTO(dto) as User) : null;
         return this.checkForError(res, () => {
             if (items === null) throw new Error(`No ${userItemType} found`);

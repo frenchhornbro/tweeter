@@ -34,11 +34,10 @@ export type { GetUserRequest } from "./model/net/request/user/GetUserRequest";
 // Responses
 // 
 export type { TweeterResponse } from "./model/net/response/TweeterResponse";
-export type { PagedUserItemResponse } from "./model/net/response/follow/PagedUserItemResponse";
+export type { PagedItemResponse } from "./model/net/response/PagedItemResponse";
 export type { UserItemCountResponse } from "./model/net/response/follow/UserItemCountResponse";
 export type { IsFollowerResponse } from "./model/net/response/follow/IsFollowerResponse";
 export type { FollowResponse } from "./model/net/response/follow/FollowResponse";
-export type { StatusItemResponse } from "./model/net/response/status/StatusItemResponse";
 export type { AuthenticationResponse } from "./model/net/response/user/AuthenticationResponse";
 export type { GetUserResponse } from "./model/net/response/user/GetUserResponse";
 
