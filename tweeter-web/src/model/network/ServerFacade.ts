@@ -1,17 +1,20 @@
-import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse,
-    FollowRequest, FollowResponse, StatusItemRequest, StatusItemResponse, Status, PostStatusRequest, RegisterRequest, AuthToken, AuthenticatedRequest,
-    GetUserRequest, GetUserResponse, AuthenticationResponse, AuthenticationRequest} from "tweeter-shared";
+import { UserItemCountRequest, UserItemCountResponse, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse,
+    FollowRequest, FollowResponse, StatusItemResponse, Status, PostStatusRequest, RegisterRequest, AuthToken, AuthenticatedRequest,
+    GetUserRequest, GetUserResponse, AuthenticationResponse, AuthenticationRequest,
+    PagedItemRequest,
+    UserDTO,
+    StatusDTO} from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
 export class ServerFacade {;
     private clientCommunicator = new ClientCommunicator(SERVER_URL);
 
-    public async getMoreFollowees(req: PagedUserItemRequest): Promise<[User[], boolean]> {
+    public async getMoreFollowees(req: PagedItemRequest<UserDTO>): Promise<[User[], boolean]> {
         return await this.getMoreUserItems(req, 'followee', 'followees');
     }
 
-    public async getMoreFollowers(req: PagedUserItemRequest): Promise<[User[], boolean]> {
+    public async getMoreFollowers(req: PagedItemRequest<UserDTO>): Promise<[User[], boolean]> {
         return await this.getMoreUserItems(req, 'follower', 'followers');
     }
 
@@ -38,8 +41,8 @@ export class ServerFacade {;
         return await this.followAction(req, false);
     }
 
-    public async loadMoreFeedItems(req: StatusItemRequest): Promise<[Status[], boolean]> {
-        const res = await this.clientCommunicator.doPost<StatusItemRequest, StatusItemResponse>(req, '/load/feed');
+    public async loadMoreFeedItems(req: PagedItemRequest<StatusDTO>): Promise<[Status[], boolean]> {
+        const res = await this.clientCommunicator.doPost<PagedItemRequest<StatusDTO>, StatusItemResponse>(req, '/load/feed');
         const items: Status[] | null = res.success && res.items ? res.items.map((dto) => Status.fromDTO(dto) as Status) : null;
         return this.checkForError(res, () => {
             if (items === null) throw new Error('No feed items found');
@@ -47,8 +50,8 @@ export class ServerFacade {;
         });
     }
 
-    public async loadMoreStoryItems(req: StatusItemRequest): Promise<[Status[], boolean]> {
-        const res = await this.clientCommunicator.doPost<StatusItemRequest, StatusItemResponse>(req, '/load/story');
+    public async loadMoreStoryItems(req: PagedItemRequest<StatusDTO>): Promise<[Status[], boolean]> {
+        const res = await this.clientCommunicator.doPost<PagedItemRequest<StatusDTO>, StatusItemResponse>(req, '/load/story');
         const items: Status[] | null = res.success && res.items ? res.items.map((dto) => Status.fromDTO(dto) as Status) : null;
         return this.checkForError(res, () => {
             if (items === null) throw new Error('No feed items found');
@@ -96,8 +99,8 @@ export class ServerFacade {;
         return this.checkForError(res, () => [res.followerCount, res.followeeCount]);
     }
 
-    private async getMoreUserItems(req: PagedUserItemRequest, path: string, userItemType: string): Promise<[User[], boolean]> {
-        const res = await this.clientCommunicator.doPost<PagedUserItemRequest, PagedUserItemResponse>(req, `/${path}/list`);
+    private async getMoreUserItems(req: PagedItemRequest<UserDTO>, path: string, userItemType: string): Promise<[User[], boolean]> {
+        const res = await this.clientCommunicator.doPost<PagedItemRequest<UserDTO>, PagedUserItemResponse>(req, `/${path}/list`);
         const items: User[] | null = res.success && res.items ? res.items.map((dto) => User.fromDTO(dto) as User) : null;
         return this.checkForError(res, () => {
             if (items === null) throw new Error(`No ${userItemType} found`);

@@ -1,7 +1,7 @@
-import { PagedUserItemRequest, PagedUserItemResponse, UserDTO } from "tweeter-shared";
+import { PagedItemRequest, PagedUserItemResponse, UserDTO } from "tweeter-shared";
 import { FollowService } from "../../../model/service/FollowService";
 
-export const superHandler = async(request: PagedUserItemRequest, followServiceMethod: (
+export const superHandler = async(request: PagedItemRequest<UserDTO>, followServiceMethod: (
     token: string,
     userAlias: string,
     pageSize: number,

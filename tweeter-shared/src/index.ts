@@ -21,11 +21,10 @@ export type { StatusDTO } from "./model/dto/StatusDTO";
 // 
 export type { TweeterRequest } from "./model/net/request/TweeterRequest";
 export type { AuthenticatedRequest } from "./model/net/request/AuthenticatedRequest";
-export type { PagedUserItemRequest } from "./model/net/request/follow/PagedUserItemRequest";
+export type { PagedItemRequest } from "./model/net/request/PagedItemRequest";
 export type { UserItemCountRequest } from "./model/net/request/follow/UserItemCountRequest";
 export type { IsFollowerRequest } from "./model/net/request/follow/IsFollowerRequest";
 export type { FollowRequest } from "./model/net/request/follow/FollowRequest";
-export type { StatusItemRequest } from "./model/net/request/status/StatusItemRequest";
 export type { PostStatusRequest } from "./model/net/request/status/PostStatusRequest";
 export type { RegisterRequest } from "./model/net/request/user/RegisterRequest";
 export type { AuthenticationRequest } from "./model/net/request/user/AuthenticationRequest";

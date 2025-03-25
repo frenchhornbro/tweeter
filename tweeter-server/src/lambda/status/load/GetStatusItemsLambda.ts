@@ -1,7 +1,7 @@
-import { StatusDTO, StatusItemRequest, StatusItemResponse } from "tweeter-shared";
+import { PagedItemRequest, StatusDTO, StatusItemResponse } from "tweeter-shared";
 import { StatusService } from "../../../model/service/StatusService";
 
-export const superHandler = async(request: StatusItemRequest, getStatusItemsMethod: (
+export const superHandler = async(request: PagedItemRequest<StatusDTO>, getStatusItemsMethod: (
     token: string,
     userAlias: string,
     pageSize: number,

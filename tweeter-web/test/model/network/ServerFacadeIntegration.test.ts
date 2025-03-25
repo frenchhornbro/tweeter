@@ -1,4 +1,4 @@
-import { FakeData, UserItemCountRequest, PagedUserItemRequest, User, StatusItemRequest, Status, RegisterRequest, AuthToken } from "tweeter-shared";
+import { FakeData, UserItemCountRequest, User, Status, RegisterRequest, AuthToken, PagedItemRequest, UserDTO, StatusDTO } from "tweeter-shared";
 import { ServerFacade } from "../../../src/model/network/ServerFacade";
 import { Buffer } from "buffer";
 import "isomorphic-fetch";
@@ -6,7 +6,7 @@ import "isomorphic-fetch";
 const serverFacade = new ServerFacade();
 
 describe("GetFollowers", () => {
-    let req: PagedUserItemRequest = {
+    let req: PagedItemRequest<UserDTO> = {
         token: "mytoken",
         userAlias: "myAlias",
         pageSize: 12345,
@@ -46,7 +46,7 @@ describe("GetFollowerCount", () => {
 });
 
 describe("LoadMoreStoryItems", () => {
-    const req: StatusItemRequest = {
+    const req: PagedItemRequest<StatusDTO> = {
         token: "mytoken",
         userAlias: "myAlias",
         pageSize: 12345,
