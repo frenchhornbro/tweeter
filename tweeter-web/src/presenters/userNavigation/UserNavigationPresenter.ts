@@ -22,7 +22,10 @@ export class UserNavigationPresenter extends Presenter<UserNavigationView> {
         event.preventDefault();
         await this.doFailureReportingOperation(async () => {
             const alias = this.extractAlias(event.target.toString());
-            const user = await this.userService.getUser(authToken!, alias);
+            const user = await this.serverFacade.getUser({
+                token: authToken === null ? "" : authToken.token,
+                alias: alias
+            });
             if (!!user) {
                 if (currentUser!.equals(user)) {
                     this.view.setDisplayedUser(currentUser!);
