@@ -1,4 +1,4 @@
-import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse, FollowRequest, FollowResponse, StatusItemRequest, StatusItemResponse, Status, PostStatusRequest, RegisterRequest, RegisterResponse, AuthToken, LoginRequest, LoginResponse } from "tweeter-shared";
+import { UserItemCountRequest, UserItemCountResponse, PagedUserItemRequest, PagedUserItemResponse, TweeterResponse, User, IsFollowerRequest, IsFollowerResponse, FollowRequest, FollowResponse, StatusItemRequest, StatusItemResponse, Status, PostStatusRequest, RegisterRequest, RegisterResponse, AuthToken, LoginRequest, LoginResponse, AuthenticatedRequest, TweeterRequest } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 import { SERVER_URL } from "../../../config";
 
@@ -75,6 +75,11 @@ export class ServerFacade {;
         return this.checkForError(res, () => {
             return [user, authToken];
         });
+    }
+
+    public async logout(req: AuthenticatedRequest): Promise<void> {
+        const res = await this.clientCommunicator.doPost<AuthenticatedRequest, TweeterResponse>(req, '/action/logout');
+        return this.checkForError(res, () => {});
     }
 
     private async followAction(req: FollowRequest, isFollow: boolean): Promise<[followerCount: number, followeeCount: number]> {

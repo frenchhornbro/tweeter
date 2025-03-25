@@ -1,12 +1,12 @@
 import { AuthToken } from "tweeter-shared";
 import { AppNavbarPresenter, AppNavbarView } from "../../../src/presenters/appNavbar/AppNavbarPresenter";
-import { instance, mock, spy, verify, when } from "@typestrong/ts-mockito";
-import { UserService } from "../../../src/model/service/UserService";
+import { anything, instance, mock, spy, verify, when } from "@typestrong/ts-mockito";
+import { ServerFacade } from "../../../src/model/network/ServerFacade";
 
 describe('AppNavbarPresenter', () => {
     let mockAppNavbarView: AppNavbarView;
     let appNavbarPresenter: AppNavbarPresenter;
-    let mockUserService: UserService;
+    let mockServerFacade: ServerFacade;
     const authToken = new AuthToken("abc123", Date.now());
 
     beforeEach(() => {
@@ -14,10 +14,10 @@ describe('AppNavbarPresenter', () => {
         const mockAppNavbarViewInstance = instance(mockAppNavbarView);
         const appNavbarPresenterSpy = spy(new AppNavbarPresenter(mockAppNavbarViewInstance));
         appNavbarPresenter = instance(appNavbarPresenterSpy);
-        mockUserService = mock<UserService>();
-        const mockUserServiceInstance = instance(mockUserService);
+        mockServerFacade = mock<ServerFacade>();
+        const mockServerFacadeInstance = instance(mockServerFacade);
 
-        when(appNavbarPresenterSpy.userService).thenReturn(mockUserServiceInstance);
+        when(appNavbarPresenterSpy.serverFacade).thenReturn(mockServerFacadeInstance);
     });
 
     it('tells the view to display a logging out message', async () => {
@@ -27,7 +27,7 @@ describe('AppNavbarPresenter', () => {
 
     it('calls logout on the user service with the correct auth token', async () => {
         await appNavbarPresenter.logOut(authToken);
-        verify(mockUserService.logout(authToken)).once();
+        verify(mockServerFacade.logout(anything())).once();
     })
 
     it('tells the view to clear the last info message and clear the user info when logout is successful', async () => {
@@ -38,7 +38,7 @@ describe('AppNavbarPresenter', () => {
 
     it('displays an error message and does not clear the last info message or clear user info when logout fails', async () => {
         const error = new Error('An error occurred');
-        when(mockUserService.logout(authToken)).thenThrow(error);
+        when(mockServerFacade.logout(anything())).thenThrow(error);
         await appNavbarPresenter.logOut(authToken);
 
         verify(mockAppNavbarView.displayErrorMessage('Failed to log user out because of exception: An error occurred')).once();
