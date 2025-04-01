@@ -1,12 +1,12 @@
 import { AuthToken } from "tweeter-shared";
 import { AuthDAO } from "./AuthDAO";
 import { DynamoDBDAO } from "../DynamoDBDAO";
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 
 export class DynamoDBAuthDAO extends DynamoDBDAO implements AuthDAO {
     private readonly tablename = "auth";
 
-    public async addAuth(alias:string, authToken: AuthToken) {
+    public async addAuth(alias: string, authToken: AuthToken): Promise<void> {
         const params = {
             TableName: this.tablename,
             Item: {
@@ -16,5 +16,13 @@ export class DynamoDBAuthDAO extends DynamoDBDAO implements AuthDAO {
             }
         };
         await this.client.send(new PutCommand(params));
+    }
+
+    public async removeAuth(token: string): Promise<void> {
+        const params = {
+            TableName: this.tablename,
+            Key: {token: token}
+        };
+        await this.client.send(new DeleteCommand(params));
     }
 }

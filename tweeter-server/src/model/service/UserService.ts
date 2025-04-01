@@ -52,8 +52,9 @@ export class UserService extends Service {
     }
 
     public async logout(token: string): Promise<void> {
-        // TODO: Implement logout
-        return;
+        this.checkForError(async () => {
+            await this.authDAO.removeAuth(token);
+        });
     };
     
     public async getUser(token: string, alias: string): Promise<UserDTO | null> {

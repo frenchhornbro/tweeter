@@ -21,8 +21,8 @@ describe("RegisterLambda", () => {
 describe("LoginLambda", () => {
     it("handler function works", async() => {
         const request = {
-            "alias": "myalias",
-            "password": "mypassword"
+            "alias": "alias",
+            "password": "password"
         };
         const res = await loginHandler(request);
         console.log(res);
