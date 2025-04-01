@@ -24,8 +24,8 @@ export class DynamoDBUserDAO extends DynamoDBDAO implements UserDAO {
         const params = {
             TableName: this.tablename,
             Key: {alias: alias}
-        }
-        const res = await this.client.send(new GetCommand(params))
+        };
+        const res = await this.client.send(new GetCommand(params));
         return res.Item !== undefined;
     }
 
@@ -33,7 +33,7 @@ export class DynamoDBUserDAO extends DynamoDBDAO implements UserDAO {
         const params = {
             TableName: this.tablename,
             Key: {alias: alias}
-        }
+        };
         const res = await this.client.send(new GetCommand(params));
         return res.Item?.password;
     }
@@ -42,13 +42,13 @@ export class DynamoDBUserDAO extends DynamoDBDAO implements UserDAO {
         const params = {
             TableName: this.tablename,
             Key: {alias: alias}
-        }
+        };
         const res = await this.client.send(new GetCommand(params));
         return {
             firstname: res.Item?.firstName,
             lastname: res.Item?.firstName,
             alias: res.Item?.lastName,
             imageURL: res.Item?.s3Link
-        }
+        };
     }
 }

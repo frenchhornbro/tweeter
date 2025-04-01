@@ -2,7 +2,6 @@ import { AuthToken, FakeData, UserDTO } from "tweeter-shared";
 import { Buffer } from "buffer";
 import { UserDAO } from "../../dao/user/UserDAO";
 import { Factory } from "../../factory/Factory";
-import { AuthDAO } from "../../dao/auth/AuthDAO";
 import { ImageDAO } from "../../dao/image/ImageDAO";
 import bcrypt from "bcryptjs";
 import { Service } from "./Service";
@@ -10,14 +9,12 @@ import { UserError } from "../error/UserError";
 
 export class UserService extends Service {
     private userDAO: UserDAO;
-    private authDAO: AuthDAO;
     private imageDAO: ImageDAO;
 
     constructor(factory: Factory) {
-        super();
+        super(factory);
         this.imageDAO = factory.getImageDAO();
         this.userDAO = factory.getUserDAO();
-        this.authDAO = factory.getAuthDAO();
     }
 
     public async register (
@@ -52,15 +49,17 @@ export class UserService extends Service {
     }
 
     public async logout(token: string): Promise<void> {
-        this.checkForError(async () => {
+        this.checkForError(async() => {
             await this.authDAO.removeAuth(token);
         });
     };
     
     public async getUser(token: string, alias: string): Promise<UserDTO | null> {
-        // TODO: Replace with the result of calling server
-        const user = FakeData.instance.findUserByAlias(alias);
-        return user === null ? null : user.getDTO();
+        return this.checkForError(async() => {
+            await this.checkToken(token);
+            const user = await this.userDAO.getUserDTO(alias);
+            return user ? user : null;
+        });
     };
 
     private async addAuth(alias: string): Promise<AuthToken> {
