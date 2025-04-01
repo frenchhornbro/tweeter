@@ -1,6 +1,6 @@
 import { ObjectCannedACL, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { ImageDAO } from "./ImageDAO";
-import { BUCKET, REGION } from "../../../config";
+import { BUCKET, REGION } from "../../config";
 
 export class S3ImageDAO implements ImageDAO {
     public async putImage(fileName: string, imageStringBase64Encoded: string): Promise<string> {

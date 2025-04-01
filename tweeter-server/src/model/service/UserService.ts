@@ -5,13 +5,15 @@ import { Factory } from "../../factory/Factory";
 import { AuthDAO } from "../../dao/auth/AuthDAO";
 import { ImageDAO } from "../../dao/image/ImageDAO";
 import bcrypt from "bcryptjs";
+import { Service } from "./Service";
 
-export class UserService {
+export class UserService extends Service {
     private userDAO: UserDAO;
     private authDAO: AuthDAO;
     private imageDAO: ImageDAO;
 
     constructor(factory: Factory) {
+        super();
         this.imageDAO = factory.getImageDAO();
         this.userDAO = factory.getUserDAO();
         this.authDAO = factory.getAuthDAO();
@@ -26,13 +28,16 @@ export class UserService {
         imageFileExtension: string
     ): Promise<[UserDTO, string, number]> {
         // TODO: Figure out what to do with the image file exension (should that be used for ContentType?)
-        const imageStringBase64: string = Buffer.from(userImageBytes).toString("base64");
-        const imageURL = await this.imageDAO.putImage(alias, imageStringBase64); //Using the alias as the filename
-        const passwordHash = await this.generateHash(password);
-        await this.userDAO.addUser(firstname, lastname, alias, passwordHash, imageURL);
-        const authToken = AuthToken.Generate();
-        this.authDAO.addAuth(alias, authToken);
-        return [{firstname, lastname, alias, imageURL}, authToken.token, authToken.timestamp];
+        return this.checkForError(async() => {
+            if (await this.userDAO.userExists(alias)) throw new Error(`[Bad Request]: Alias is already taken`);
+            const imageStringBase64: string = Buffer.from(userImageBytes).toString("base64");
+            const imageURL = await this.imageDAO.putImage(alias, imageStringBase64); //Using the alias as the filename
+            const passwordHash = await this.generateHash(password);
+            await this.userDAO.addUser(firstname, lastname, alias, passwordHash, imageURL);
+            const authToken = AuthToken.Generate();
+            this.authDAO.addAuth(alias, authToken);
+            return [{firstname, lastname, alias, imageURL}, authToken.token, authToken.timestamp];
+        });
     }
 
     public async login(alias: string, password: string): Promise<[UserDTO, string, number]> {
