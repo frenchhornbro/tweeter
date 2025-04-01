@@ -11,7 +11,8 @@ describe("GetFeedItemLambda", () => {
             "lastItem": null
         };
         const res = await feedHandler(request);
-        console.log(res);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
 
@@ -24,7 +25,8 @@ describe("GetStoryItemLambda", () => {
             "lastItem": null
         };
         const res = await storyHandler(request);
-        console.log(res);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
 
@@ -44,6 +46,7 @@ describe("PostStatusLambda", () => {
             }
         }
         const res = await postStatusHandler(request);
-        console.log(res);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     })
 });

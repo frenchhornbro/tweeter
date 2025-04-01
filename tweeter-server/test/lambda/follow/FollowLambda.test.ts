@@ -8,14 +8,15 @@ import { handler as unfollowHandler } from "../../../src/lambda/follow/action/Un
 describe("GetFolloweesLambda", () => {
     it("handler function works", async() => {
         const followRequest = {
-            "token": "mytoken",
-            "userAlias": "myAlias",
-            "pageSize": 12345,
+            "token": "8b836627-a50f-4a1e-a4a5-e8117cf3f68c",
+            "userAlias": "@bob",
+            "pageSize": 3,
             "lastItem": null
         };
 
-        const result = await followeesHandler(followRequest);
-        console.log(result);
+        const res = await followeesHandler(followRequest);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
 
@@ -26,8 +27,9 @@ describe("GetFollowerCountLambda", () => {
             userAlias: "myAlias"
         };
         
-        const result = await followerCountHandler(followCountRequest);
-        console.log(result);
+        const res = await followerCountHandler(followCountRequest);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
 
@@ -38,8 +40,9 @@ describe("GetFolloweeCountLambda", () => {
             userAlias: "myAlias"
         };
         
-        const result = await followeeCountHandler(followCountRequest);
-        console.log(result);
+        const res = await followeeCountHandler(followCountRequest);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
 
@@ -60,8 +63,9 @@ describe("GetIsFollowerStatusLambda", () => {
                 imageURL: "imageURL2"
             }
         }
-        const result = await isFollowerHandler(isFollowerCountRequest);
-        console.log(result);
+        const res = await isFollowerHandler(isFollowerCountRequest);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
 
@@ -76,8 +80,9 @@ describe("FollowLambda", () => {
                 imageURL: "imageURL"
             },
         };
-        const result = await followHandler(followRequest);
-        console.log(result);
+        const res = await followHandler(followRequest);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
 
@@ -92,7 +97,8 @@ describe("UnfollowLambda", () => {
                 imageURL: "imageURL"
             },
         };
-        const result = await unfollowHandler(unfollowRequest);
-        console.log(result);
+        const res = await unfollowHandler(unfollowRequest);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });

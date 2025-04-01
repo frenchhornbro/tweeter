@@ -14,7 +14,8 @@ describe("RegisterLambda", () => {
             imageFileExtension: "imageFileExt",
         };
         const res = await registerHandler(request);
-        console.log(res);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
 
@@ -25,7 +26,8 @@ describe("LoginLambda", () => {
             "password": "password"
         };
         const res = await loginHandler(request);
-        console.log(res);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
 
@@ -35,17 +37,19 @@ describe("LogoutLambda", () => {
             "token": "myauthtoken"
         }
         const res = await logoutHandler(request);
-        console.log(res);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
 
 describe("GetUserLambda", () => {
     it("handler function works", async() => {
         const request = {
-            "token": "mytoken",
+            "token": "8b836627-a50f-4a1e-a4a5-e8117cf3f68c",
             "alias": "@frank"
         }
         const res = await getUserHandler(request);
-        console.log(res);
+        expect(res.success).toBeTruthy();
+        expect(res.message).toBeNull();
     });
 });
