@@ -8,7 +8,7 @@ describe("RegisterLambda", () => {
         const request = {
             firstName: "firstName",
             lastName: "lastName",
-            alias: "alias",
+            alias: `alias ${new Date().toString()}`,
             password: "password",
             userImageBytes: new Uint8Array(),
             imageFileExtension: "imageFileExt",

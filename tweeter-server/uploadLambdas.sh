@@ -52,3 +52,4 @@ for pid in "${pids[@]}"; do
 done
 
 echo -e '\nLambda functions updated or created.'
+echo -e '\n------------------------------------------------------------------------------------------------'
