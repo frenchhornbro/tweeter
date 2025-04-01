@@ -1,4 +1,4 @@
-import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { BatchGetCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBDAO } from "../DynamoDBDAO";
 import { UserDAO } from "./UserDAO";
 import { UserDTO } from "tweeter-shared";
@@ -50,5 +50,26 @@ export class DynamoDBUserDAO extends DynamoDBDAO implements UserDAO {
             alias: res.Item?.lastName,
             imageURL: res.Item?.s3Link
         };
+    }
+
+    public async getPageOfUserData(aliases: string[]): Promise<UserDTO[]> {
+        const keys = aliases.map<Record<string, {}>>((alias) => ({["alias"]: alias}));
+        const params = {
+            RequestItems: {
+                [this.tablename]: {
+                    Keys: keys
+                }
+            }
+        };
+        const res = await this.client.send(new BatchGetCommand(params));
+        if (!res.Responses) return [];
+        return res.Responses[this.tablename].map<UserDTO>(
+            (item) => ({
+                firstname: item["firstName"],
+                lastname: item["lastName"],
+                alias: item["alias"],
+                imageURL: item["s3Link"]
+            })
+        );
     }
 }

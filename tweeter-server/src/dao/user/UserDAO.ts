@@ -5,4 +5,5 @@ export interface UserDAO {
     userExists: (alias: string) => Promise<boolean>;
     getPasswordHash: (alias: string) => Promise<string>;
     getUserDTO: (alias: string) => Promise<UserDTO>;
+    getPageOfUserData: (aliases: string[]) => Promise<UserDTO[]>;
 }

@@ -1,14 +1,33 @@
 import { FakeData, User, UserDTO } from "tweeter-shared";
+import { Service } from "./Service";
+import { Factory } from "../../factory/Factory";
+import { FollowsDAO } from "../../dao/follows/FollowsDAO";
+import { UserDAO } from "../../dao/user/UserDAO";
 
-export class FollowService {
+export class FollowService extends Service {
+    private followsDAO: FollowsDAO;
+    private userDAO: UserDAO;
+
+    public constructor(factory: Factory) {
+        super(factory);
+        this.followsDAO = factory.getFollowsDAO();
+        this.userDAO = factory.getUserDAO();
+    }
+
     public async loadMoreFollowees(
         token: string,
         userAlias: string,
         pageSize: number,
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
-        // TODO: Replace with the result of calling server
-        return await this.getFakeData(lastItem, pageSize, userAlias);
+        // This loads everyone I am following
+        return this.checkForError(async() => {
+            await this.checkToken(token);
+            const [followeeAliases, hasMorePages] = await this.followsDAO.getPageOfFollowees(userAlias, pageSize, lastItem);
+            if (followeeAliases.length === 0) return [[], false];
+            const followeeUsers = await this.userDAO.getPageOfUserData(followeeAliases);
+            return [followeeUsers, hasMorePages];
+        });
     }
     
     public async loadMoreFollowers(
@@ -17,6 +36,7 @@ export class FollowService {
         pageSize: number,
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
+        // This loads everyone following me
         // TODO: Replace with the result of calling server
         return await this.getFakeData(lastItem, pageSize, userAlias);
     }

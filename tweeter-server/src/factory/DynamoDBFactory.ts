@@ -1,5 +1,7 @@
 import { AuthDAO } from "../dao/auth/AuthDAO";
 import { DynamoDBAuthDAO } from "../dao/auth/DynamoDBAuthDAO";
+import { DynamoDBFollowsDAO } from "../dao/follows/DynamoDBFollowsDAO";
+import { FollowsDAO } from "../dao/follows/FollowsDAO";
 import { ImageDAO } from "../dao/image/ImageDAO";
 import { S3ImageDAO } from "../dao/image/S3ImageDAO";
 import { DynamoDBUserDAO } from "../dao/user/DynamoDBUserDAO";
@@ -18,4 +20,8 @@ export class DynamoDBFactory implements Factory {
     public getImageDAO(): ImageDAO {
         return new S3ImageDAO();
     }
+
+    public getFollowsDAO(): FollowsDAO {
+        return new DynamoDBFollowsDAO();
+    };
 }
