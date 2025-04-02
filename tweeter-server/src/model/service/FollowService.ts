@@ -50,9 +50,11 @@ export class FollowService extends Service {
         token: string,
         userAlias: string
     ): Promise<number> {
-        // TODO: Replace with the result of calling server
-
-        return FakeData.instance.getFollowerCount(userAlias);
+        return this.checkForError(async() => {
+            await this.checkToken(token);
+            const followers: string[] = await this.followsDAO.getFollowers(userAlias);
+            return followers ? followers.length : 0;
+        });
     }
 
     public async getFolloweeCount(

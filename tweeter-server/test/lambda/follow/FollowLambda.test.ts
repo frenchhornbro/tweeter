@@ -4,13 +4,25 @@ import { handler as followeeCountHandler } from "../../../src/lambda/follow/coun
 import { handler as isFollowerHandler } from "../../../src/lambda/follow/GetIsFollowerStatusLambda";
 import { handler as followHandler } from "../../../src/lambda/follow/action/FollowLambda";
 import { handler as unfollowHandler } from "../../../src/lambda/follow/action/UnfollowLambda";
-import { TOKEN } from "../../../src/config";
+import { UserService } from "../../../src/model/service/UserService";
+import { DynamoDBFactory } from "../../../src/factory/DynamoDBFactory";
+import { UserDTO } from "tweeter-shared";
+
+let alias: string;
+let user: UserDTO;
+let token: string;
+beforeAll(async() => {
+    const userService = new UserService(new DynamoDBFactory());
+    const now = new Date().getSeconds();
+    alias = `alias${now}`;
+    [user, token,] = await userService.register(`firstname${now}`, `lastname${now}`, alias, `password`, new Uint8Array([]), "png");
+});
 
 describe("GetFolloweesLambda", () => {
     it("handler function works", async() => {
         const followRequest = {
-            "token": TOKEN,
-            "userAlias": "@bob",
+            "token": token,
+            "userAlias": alias,
             "pageSize": 3,
             "lastItem": null
         };
@@ -24,21 +36,22 @@ describe("GetFolloweesLambda", () => {
 describe("GetFollowerCountLambda", () => {
     it("handler function works", async() => {
         const followCountRequest = {
-            token: "mytoken",
-            userAlias: "myAlias"
+            token: token,
+            userAlias: alias
         };
         
         const res = await followerCountHandler(followCountRequest);
         expect(res.success).toBeTruthy();
         expect(res.message).toBeNull();
+        expect(res.count).toBe(0);
     });
 });
 
 describe("GetFolloweeCountLambda", () => {
     it("handler function works", async() => {
         const followCountRequest = {
-            token: "mytoken",
-            userAlias: "myAlias"
+            token: token,
+            userAlias: alias
         };
         
         const res = await followeeCountHandler(followCountRequest);
@@ -49,22 +62,17 @@ describe("GetFolloweeCountLambda", () => {
 
 describe("GetIsFollowerStatusLambda", () => {
     it("handler function works", async() => {
-        const isFollowerCountRequest = {
-            token: "mytoken",
-            user: {
-                firstname: "firstname1",
-                lastname: "lastname1",
-                alias: "alias1",
-                imageURL: "imageURL1"
-            },
+        const isFollowerRequest = {
+            token: token,
+            user: user,
             selectedUser: {
                 firstname: "firstname2",
                 lastname: "lastname2",
                 alias: "alias2",
                 imageURL: "imageURL2"
             }
-        }
-        const res = await isFollowerHandler(isFollowerCountRequest);
+        };
+        const res = await isFollowerHandler(isFollowerRequest);
         expect(res.success).toBeTruthy();
         expect(res.message).toBeNull();
     });
@@ -73,7 +81,7 @@ describe("GetIsFollowerStatusLambda", () => {
 describe("FollowLambda", () => {
     it("handler function works", async() => {
         const followRequest = {
-            token: "mytoken",
+            token: token,
             userToFollow: {
                 firstname: "firstname",
                 lastname: "lastname",
@@ -90,7 +98,7 @@ describe("FollowLambda", () => {
 describe("UnfollowLambda", () => {
     it("handler function works", async() => {
         const unfollowRequest = {
-            token: "mytoken",
+            token: token,
             userToFollow: {
                 firstname: "firstname",
                 lastname: "lastname",
