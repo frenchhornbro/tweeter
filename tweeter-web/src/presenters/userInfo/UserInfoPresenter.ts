@@ -57,7 +57,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
 
             const [followerCount, followeeCount] = await this.followService.follow({
                 token: authToken.token,
-                userToFollow: displayedUser.getDTO()
+                userToFollowAlias: displayedUser.alias
         });
 
             this.view.setIsFollower(true);
@@ -78,7 +78,7 @@ export class UserInfoPresenter extends Presenter<UserInfoView> {
 
             const [followerCount, followeeCount] = await this.followService.unfollow({
                 token: authToken.token,
-                userToFollow: displayedUser.getDTO()
+                userToFollowAlias: displayedUser.alias
             });
 
             this.view.setIsFollower(false);

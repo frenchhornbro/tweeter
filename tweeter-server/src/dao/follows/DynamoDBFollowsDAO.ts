@@ -1,7 +1,7 @@
 import { UserDTO } from "tweeter-shared";
 import { DynamoDBDAO } from "../DynamoDBDAO";
 import { FollowsDAO } from "./FollowsDAO";
-import { GetCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export class DynamoDBFollowsDAO extends DynamoDBDAO implements FollowsDAO {
     private tablename = "follows";
@@ -79,5 +79,16 @@ export class DynamoDBFollowsDAO extends DynamoDBDAO implements FollowsDAO {
         };
         const res = await this.client.send(new GetCommand(params));
         return res.Item !== undefined;
+    }
+
+    public async addFollow(followerAlias: string, followeeAlias: string): Promise<void> {
+        const params = {
+            TableName: this.tablename,
+            Item: {
+                follower_handle: followerAlias,
+                followee_handle: followeeAlias
+            }
+        };
+        await this.client.send(new PutCommand(params));
     }
 }

@@ -6,4 +6,5 @@ export interface FollowsDAO {
     getFollowees: (alias: string) => Promise<string[]>;
     getFollowers: (alias: string) => Promise<string[]>;
     getIsFollowerStatus: (alias: string, selectedUserAlias: string) => Promise<boolean>;
+    addFollow: (followerAlias: string, followeeAlias: string) => Promise<void>;
 }

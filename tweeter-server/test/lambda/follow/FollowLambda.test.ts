@@ -77,12 +77,7 @@ describe("FollowLambda", () => {
     it("handler function works", async() => {
         const followRequest = {
             token: token,
-            userToFollow: {
-                firstname: "firstname",
-                lastname: "lastname",
-                alias: "alias",
-                imageURL: "imageURL"
-            },
+            userToFollowAlias: "@bob",
         };
         const res = await followHandler(followRequest);
         expect(res.success).toBeTruthy();
@@ -94,12 +89,7 @@ describe("UnfollowLambda", () => {
     it("handler function works", async() => {
         const unfollowRequest = {
             token: token,
-            userToFollow: {
-                firstname: "firstname",
-                lastname: "lastname",
-                alias: "alias",
-                imageURL: "imageURL"
-            },
+            userToFollowAlias: "@bob",
         };
         const res = await unfollowHandler(unfollowRequest);
         expect(res.success).toBeTruthy();

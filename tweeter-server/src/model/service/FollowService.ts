@@ -84,21 +84,30 @@ export class FollowService extends Service {
 
     public async follow(
         token: string,
-        userToFollow: UserDTO
+        userToFollowAlias: string
     ): Promise<[followerCount: number, followeeCount: number]> {
-        // TODO: Call the server
-        const followerCount = await this.getFollowerCount(token, userToFollow.alias);
-        const followeeCount = await this.getFolloweeCount(token, userToFollow.alias);
-        return [followerCount, followeeCount];
+        return this.checkForError(async() => {
+            await this.checkToken(token);
+            if (!userToFollowAlias) throw new UserError("Invalid followee user alias");
+            const user = await this.authDAO.getUser(token);
+            if (!user) throw new UserError("Invalid follower user alias");
+            if (user.alias === userToFollowAlias) throw new UserError("User cannot follow self");
+            await this.followsDAO.addFollow(user.alias, userToFollowAlias);
+            return await this.getUpdatedCounts(token, userToFollowAlias);
+        });
     }
 
     public async unfollow(
         token: string,
-        userToUnfollow: UserDTO
+        userToUnfollowAlias: string
     ): Promise<[followerCount: number, followeeCount: number]> {
         // TODO: Call the server
-        const followerCount = await this.getFollowerCount(token, userToUnfollow.alias);
-        const followeeCount = await this.getFolloweeCount(token, userToUnfollow.alias);
+        return await this.getUpdatedCounts(token, userToUnfollowAlias);
+    }
+
+    private async getUpdatedCounts(token: string, userAlias: string): Promise<[followerCount: number, followeeCount: number]> {
+        const followerCount = await this.getFollowerCount(token, userAlias);
+        const followeeCount = await this.getFolloweeCount(token, userAlias);
         return [followerCount, followeeCount];
     }
 }
