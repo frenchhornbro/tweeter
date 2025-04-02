@@ -2,13 +2,16 @@ import { FakeData, Status, StatusDTO } from "tweeter-shared";
 import { Service } from "./Service";
 import { Factory } from "../../factory/Factory";
 import { StatusDAO } from "../../dao/status/StatusDAO";
+import { FollowsDAO } from "../../dao/follows/FollowsDAO";
 
 export class StatusService extends Service {
     private statusDAO: StatusDAO;
+    private followsDAO: FollowsDAO;
 
     public constructor(factory: Factory) {
         super(factory);
         this.statusDAO = factory.getStatusDAO();
+        this.followsDAO = factory.getFollowsDAO();
     }
 
     public async loadMoreFeedItems(
@@ -17,6 +20,7 @@ export class StatusService extends Service {
         pageSize: number,
         lastItem: StatusDTO | null
     ): Promise<[StatusDTO[], boolean]> {
+        // This is the statuses posted by people I follow
         return this.checkForError(async() => {
             await this.checkToken(token);
             return await this.statusDAO.getPageOfFeedItems(userAlias, pageSize, lastItem);
@@ -29,8 +33,11 @@ export class StatusService extends Service {
         pageSize: number,
         lastItem: StatusDTO | null
     ): Promise<[StatusDTO[], boolean]> {
-        // TODO: Replace with the result of calling server
-        return await this.getFakeData(lastItem, pageSize);
+        // This is the statuses I have posted
+        return this.checkForError(async() => {
+            await this.checkToken(token);
+            return await this.statusDAO.getPageOfStoryItems(userAlias, pageSize, lastItem);
+        });
     };
 
     public async postStatus(
