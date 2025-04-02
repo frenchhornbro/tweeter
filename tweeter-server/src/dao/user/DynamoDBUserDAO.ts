@@ -46,8 +46,8 @@ export class DynamoDBUserDAO extends DynamoDBDAO implements UserDAO {
         const res = await this.client.send(new GetCommand(params));
         return {
             firstname: res.Item?.firstName,
-            lastname: res.Item?.firstName,
-            alias: res.Item?.lastName,
+            lastname: res.Item?.lastName,
+            alias: res.Item?.alias,
             imageURL: res.Item?.s3Link
         };
     }
