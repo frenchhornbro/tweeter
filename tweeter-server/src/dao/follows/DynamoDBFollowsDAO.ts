@@ -1,7 +1,7 @@
 import { UserDTO } from "tweeter-shared";
 import { DynamoDBDAO } from "../DynamoDBDAO";
 import { FollowsDAO } from "./FollowsDAO";
-import { GetCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, GetCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export class DynamoDBFollowsDAO extends DynamoDBDAO implements FollowsDAO {
     private tablename = "follows";
@@ -90,5 +90,16 @@ export class DynamoDBFollowsDAO extends DynamoDBDAO implements FollowsDAO {
             }
         };
         await this.client.send(new PutCommand(params));
+    }
+
+    public async removeFollow(followerAlias: string, followeeAlias: string): Promise<void> {
+        const params = {
+            TableName: this.tablename,
+            Key: {
+                follower_handle: followerAlias,
+                followee_handle: followeeAlias
+            }
+        };
+        await this.client.send(new DeleteCommand(params));
     }
 }

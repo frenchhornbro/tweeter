@@ -96,13 +96,19 @@ export class FollowService extends Service {
             return await this.getUpdatedCounts(token, userToFollowAlias);
         });
     }
-
+    
     public async unfollow(
         token: string,
         userToUnfollowAlias: string
     ): Promise<[followerCount: number, followeeCount: number]> {
-        // TODO: Call the server
-        return await this.getUpdatedCounts(token, userToUnfollowAlias);
+        return this.checkForError(async() => {
+            await this.checkToken(token);
+            if (!userToUnfollowAlias) throw new UserError("Invalid followee user alias");
+            const user = await this.authDAO.getUser(token);
+            if (!user) throw new UserError("Invalid follower user alias");
+            await this.followsDAO.removeFollow(user.alias, userToUnfollowAlias);
+            return await this.getUpdatedCounts(token, userToUnfollowAlias);
+        });
     }
 
     private async getUpdatedCounts(token: string, userAlias: string): Promise<[followerCount: number, followeeCount: number]> {
