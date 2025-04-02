@@ -4,11 +4,12 @@ import { handler as followeeCountHandler } from "../../../src/lambda/follow/coun
 import { handler as isFollowerHandler } from "../../../src/lambda/follow/GetIsFollowerStatusLambda";
 import { handler as followHandler } from "../../../src/lambda/follow/action/FollowLambda";
 import { handler as unfollowHandler } from "../../../src/lambda/follow/action/UnfollowLambda";
+import { TOKEN } from "../../../src/config";
 
 describe("GetFolloweesLambda", () => {
     it("handler function works", async() => {
         const followRequest = {
-            "token": "8b836627-a50f-4a1e-a4a5-e8117cf3f68c",
+            "token": TOKEN,
             "userAlias": "@bob",
             "pageSize": 3,
             "lastItem": null

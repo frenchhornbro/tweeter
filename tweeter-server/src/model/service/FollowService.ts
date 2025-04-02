@@ -37,8 +37,13 @@ export class FollowService extends Service {
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         // This loads everyone following me
-        // TODO: Replace with the result of calling server
-        return await this.getFakeData(lastItem, pageSize, userAlias);
+        return this.checkForError(async() => {
+            await this.checkToken(token);
+            const [followerAliases, hasMorePages] = await this.followsDAO.getPageOfFollowers(userAlias, pageSize, lastItem);
+            if (followerAliases.length === 0) return [[], false];
+            const followerUsers = await this.userDAO.getPageOfUserData(followerAliases);
+            return [followerUsers, hasMorePages];
+        });
     }
 
     public async getFollowerCount(

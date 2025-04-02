@@ -64,7 +64,7 @@ export class UserService extends Service {
 
     private async addAuth(alias: string): Promise<AuthToken> {
         const authToken = AuthToken.Generate();
-        this.authDAO.addAuth(alias, authToken);
+        await this.authDAO.addAuth(alias, authToken);
         return authToken;
     }
 

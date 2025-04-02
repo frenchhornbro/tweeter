@@ -2,6 +2,7 @@ import { handler as registerHandler } from "../../../src/lambda/user/action/Regi
 import { handler as loginHandler } from "../../../src/lambda/user/action/LoginLambda";
 import { handler as logoutHandler } from "../../../src/lambda/user/action/LogoutLambda";
 import { handler as getUserHandler } from "../../../src/lambda/user/GetUserLambda";
+import { TOKEN } from "../../../src/config";
 
 describe("RegisterLambda", () => {
     it("handler function works", async() => {
@@ -45,7 +46,7 @@ describe("LogoutLambda", () => {
 describe("GetUserLambda", () => {
     it("handler function works", async() => {
         const request = {
-            "token": "8b836627-a50f-4a1e-a4a5-e8117cf3f68c",
+            "token": TOKEN,
             "alias": "@frank"
         }
         const res = await getUserHandler(request);

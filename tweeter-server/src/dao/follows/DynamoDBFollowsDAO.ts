@@ -25,4 +25,22 @@ export class DynamoDBFollowsDAO extends DynamoDBDAO implements FollowsDAO {
         const hasMore = res.LastEvaluatedKey !== undefined;
         return [aliases, hasMore];
     }
+
+    public async getPageOfFollowers(alias: string, pageSize: number, lastItem: UserDTO | null): Promise<[followerAliases: string[], hasMorePages: boolean]> {
+        const params = {
+            TableName: this.tablename,
+            KeyConditionExpression: "follower_handle = :alias",
+            ExpressionAttributeValues: {":alias": alias},
+            Limit: pageSize,
+            ExclusiveStartKey: lastItem ? {
+                follower_handle: lastItem.alias,
+                followee_handle: alias
+            } : undefined
+        };
+        const res = await this.client.send(new QueryCommand(params));
+        const aliases: string[] = [];
+        res.Items?.forEach((item) => aliases.push(item.followee_handle));
+        const hasMore = res.LastEvaluatedKey !== undefined;
+        return [aliases, hasMore];
+    }
 }
