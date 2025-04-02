@@ -64,13 +64,8 @@ describe("GetIsFollowerStatusLambda", () => {
     it("handler function works", async() => {
         const isFollowerRequest = {
             token: token,
-            user: user,
-            selectedUser: {
-                firstname: "firstname2",
-                lastname: "lastname2",
-                alias: "alias2",
-                imageURL: "imageURL2"
-            }
+            userAlias: alias,
+            selectedUserAlias: "@bob"
         };
         const res = await isFollowerHandler(isFollowerRequest);
         expect(res.success).toBeTruthy();

@@ -1,15 +1,5 @@
 {
     "token": "mytoken",
-    "user": {
-        "firstname": "firstname1",
-        "lastname": "lastname1",
-        "alias": "alias1",
-        "imageURL": "imageURL1"
-    },
-    "selectedUser": {
-        "firstname": "firstname2",
-        "lastname": "lastname2",
-        "alias": "alias2",
-        "imageURL": "imageURL2"
-    }
+    "userAlias": "alias1",
+    "selectedUserAlias": "alias2"
 }

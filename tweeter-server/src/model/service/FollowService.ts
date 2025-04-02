@@ -1,8 +1,9 @@
-import { FakeData, User, UserDTO } from "tweeter-shared";
+import { UserDTO } from "tweeter-shared";
 import { Service } from "./Service";
 import { Factory } from "../../factory/Factory";
 import { FollowsDAO } from "../../dao/follows/FollowsDAO";
 import { UserDAO } from "../../dao/user/UserDAO";
+import { UserError } from "../error/UserError";
 
 export class FollowService extends Service {
     private followsDAO: FollowsDAO;
@@ -70,11 +71,15 @@ export class FollowService extends Service {
 
     public async getIsFollowerStatus(
         token: string,
-        user: UserDTO,
-        selectedUser: UserDTO
+        userAlias: string,
+        selectedUserAlias: string
     ): Promise<boolean> {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.isFollower();
+        return this.checkForError(async() => {
+            await this.checkToken(token);
+            if (!userAlias) throw new UserError("Invalid user alias");
+            if (!selectedUserAlias) throw new UserError("Invalid selected user alias");
+            return await this.followsDAO.getIsFollowerStatus(userAlias, selectedUserAlias);
+        });
     }
 
     public async follow(
