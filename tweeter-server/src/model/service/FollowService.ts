@@ -46,6 +46,17 @@ export class FollowService extends Service {
         });
     }
 
+    public async getFolloweeCount(
+        token: string,
+        userAlias: string
+    ): Promise<number> {
+        return this.checkForError(async() => {
+            await this.checkToken(token);
+            const followees: string[] = await this.followsDAO.getFollowees(userAlias);
+            return followees ? followees.length : 0;
+        });
+    }
+
     public async getFollowerCount(
         token: string,
         userAlias: string
@@ -55,14 +66,6 @@ export class FollowService extends Service {
             const followers: string[] = await this.followsDAO.getFollowers(userAlias);
             return followers ? followers.length : 0;
         });
-    }
-
-    public async getFolloweeCount(
-        token: string,
-        userAlias: string
-    ): Promise<number> {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.getFolloweeCount(userAlias);
     }
 
     public async getIsFollowerStatus(
@@ -92,11 +95,5 @@ export class FollowService extends Service {
         const followerCount = await this.getFollowerCount(token, userToUnfollow.alias);
         const followeeCount = await this.getFolloweeCount(token, userToUnfollow.alias);
         return [followerCount, followeeCount];
-    }
-
-    private async getFakeData(lastItem: UserDTO | null, pageSize: number, userAlias: string): Promise<[UserDTO[], boolean]> {
-        const [items, hasMore] = FakeData.instance.getPageOfUsers(User.fromDTO(lastItem), pageSize, userAlias);
-        const dtos = items.map((user) => user.getDTO());
-        return [dtos, hasMore];
     }
 }
