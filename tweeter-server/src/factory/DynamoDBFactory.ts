@@ -4,6 +4,8 @@ import { DynamoDBFollowsDAO } from "../dao/follows/DynamoDBFollowsDAO";
 import { FollowsDAO } from "../dao/follows/FollowsDAO";
 import { ImageDAO } from "../dao/image/ImageDAO";
 import { S3ImageDAO } from "../dao/image/S3ImageDAO";
+import { DynamoDBStatusDAO } from "../dao/status/DynamoDBStatusDAO";
+import { StatusDAO } from "../dao/status/StatusDAO";
 import { DynamoDBUserDAO } from "../dao/user/DynamoDBUserDAO";
 import { UserDAO } from "../dao/user/UserDAO";
 import { Factory } from "./Factory";
@@ -23,5 +25,9 @@ export class DynamoDBFactory implements Factory {
 
     public getFollowsDAO(): FollowsDAO {
         return new DynamoDBFollowsDAO();
-    };
+    }
+
+    public getStatusDAO(): StatusDAO {
+        return new DynamoDBStatusDAO();
+    }
 }

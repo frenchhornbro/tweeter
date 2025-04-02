@@ -4,18 +4,14 @@ import { handler as followeeCountHandler } from "../../../src/lambda/follow/coun
 import { handler as isFollowerHandler } from "../../../src/lambda/follow/GetIsFollowerStatusLambda";
 import { handler as followHandler } from "../../../src/lambda/follow/action/FollowLambda";
 import { handler as unfollowHandler } from "../../../src/lambda/follow/action/UnfollowLambda";
-import { UserService } from "../../../src/model/service/UserService";
-import { DynamoDBFactory } from "../../../src/factory/DynamoDBFactory";
 import { UserDTO } from "tweeter-shared";
+import { getNewUser } from "../getNewUser";
 
 let alias: string;
 let user: UserDTO;
 let token: string;
 beforeAll(async() => {
-    const userService = new UserService(new DynamoDBFactory());
-    const now = new Date().getSeconds();
-    alias = `alias${now}`;
-    [user, token,] = await userService.register(`firstname${now}`, `lastname${now}`, alias, `password`, new Uint8Array([]), "png");
+    [alias, user, token] = await getNewUser();
 });
 
 describe("GetFolloweesLambda", () => {
