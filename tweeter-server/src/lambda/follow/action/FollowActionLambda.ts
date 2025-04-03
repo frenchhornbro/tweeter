@@ -1,4 +1,4 @@
-import { FollowRequest, FollowResponse, UserDTO } from "tweeter-shared";
+import { FollowRequest, FollowResponse } from "tweeter-shared";
 import { FollowService } from "../../../model/service/FollowService";
 import { DynamoDBFactory } from "../../../factory/DynamoDBFactory";
 

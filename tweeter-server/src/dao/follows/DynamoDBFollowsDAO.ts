@@ -1,6 +1,6 @@
 import { UserDTO } from "tweeter-shared";
 import { FollowsDAO } from "./FollowsDAO";
-import { DeleteCommand, GetCommand, PutCommand, QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { DyanmoDBPagedDAO } from "../DynamoDBPagedDAO";
 
 export class DynamoDBFollowsDAO extends DyanmoDBPagedDAO implements FollowsDAO {

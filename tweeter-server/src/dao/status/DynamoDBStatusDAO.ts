@@ -1,6 +1,6 @@
 import { StatusDTO } from "tweeter-shared";
 import { StatusDAO } from "./StatusDAO";
-import { BatchWriteCommand, PutCommand, QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
+import { BatchWriteCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { DyanmoDBPagedDAO } from "../DynamoDBPagedDAO";
 
 export class DynamoDBStatusDAO extends DyanmoDBPagedDAO implements StatusDAO {
