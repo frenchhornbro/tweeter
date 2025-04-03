@@ -10,6 +10,17 @@ export class DynamoDBFollowsDAO extends DyanmoDBPagedDAO implements FollowsDAO {
     public async getPageOfFollowees(alias: string, pageSize: number, lastItem: UserDTO | null): Promise<[followeeAliases: string[], hasMorePages: boolean]> {
         const params = {
             TableName: this.tablename,
+            KeyConditionExpression: "follower_handle = :alias",
+            ExpressionAttributeValues: {":alias": alias},
+            Limit: pageSize,
+            ExclusiveStartKey: lastItem ? this.generateFollowKey(alias, lastItem.alias) : undefined
+        };
+        return await this.getPage(params, "followee_handle");
+    }
+    
+    public async getPageOfFollowers(alias: string, pageSize: number, lastItem: UserDTO | null): Promise<[followerAliases: string[], hasMorePages: boolean]> {
+        const params = {
+            TableName: this.tablename,
             IndexName: this.indexname,
             KeyConditionExpression: "followee_handle = :alias",
             ExpressionAttributeValues: {":alias": alias},
@@ -17,17 +28,6 @@ export class DynamoDBFollowsDAO extends DyanmoDBPagedDAO implements FollowsDAO {
             ExclusiveStartKey: lastItem ? this.generateFollowKey(lastItem.alias, alias) : undefined
         };
         return await this.getPage(params, "follower_handle");
-    }
-
-    public async getPageOfFollowers(alias: string, pageSize: number, lastItem: UserDTO | null): Promise<[followerAliases: string[], hasMorePages: boolean]> {
-        const params = {
-            TableName: this.tablename,
-            KeyConditionExpression: "follower_handle = :alias",
-            ExpressionAttributeValues: {":alias": alias},
-            Limit: pageSize,
-            ExclusiveStartKey: lastItem ? this.generateFollowKey(alias, lastItem.alias) : undefined
-        };
-        return await this.getPage(params, "followee_handle");
     }
 
     public async getFollowees(alias: string): Promise<string[]> {
