@@ -34,11 +34,10 @@ export class DynamoDBAuthDAO extends DynamoDBDAO implements AuthDAO {
         await this.client.send(new DeleteCommand(this.generateAuthParams(token)));
     }
 
-    public async authExists(token: string): Promise<boolean> {
+    public async getAuth(token: string): Promise<[string, number]> {
         const res = await this.client.send(new GetCommand(this.generateAuthParams(token)));
-        return res.Item !== undefined;
+        return [res.Item?.token, res.Item?.expires];
     }
-
     public async getUser(token: string): Promise<UserDTO> {
         const res = await this.client.send(new GetCommand(this.generateAuthParams(token)));
         return {
@@ -48,7 +47,7 @@ export class DynamoDBAuthDAO extends DynamoDBDAO implements AuthDAO {
             imageURL: res.Item?.s3Link
         };
     }
-
+    
     private generateAuthParams(token: string) {    
         return {
             TableName: this.tablename,

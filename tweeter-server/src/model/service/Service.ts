@@ -25,7 +25,9 @@ export abstract class Service {
     }
 
     protected async checkToken(token: string) {
-        if (!await this.authDAO.authExists(token)) throw new UserError("Invalid token");
+        const [actualToken, expires] = await this.authDAO.getAuth(token);
+        if (!actualToken) throw new UserError("Invalid token");
+        if (expires <= Date.now()) throw new UserError("Token is expired");
         await this.authDAO.updateAuth(token);
     }
 }
