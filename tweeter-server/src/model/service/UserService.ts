@@ -26,7 +26,7 @@ export class UserService extends Service {
         imageFileExtension: string
     ): Promise<[UserDTO, string, number]> {
         // TODO: Figure out what to do with the image file exension (should that be used for ContentType?)
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             if (await this.userDAO.userExists(alias)) throw new UserError("Alias is already taken");
             const imageStringBase64: string = Buffer.from(userImageBytes).toString("base64");
             const imageURL = await this.imageDAO.putImage(alias, imageStringBase64); //Using the alias as the filename
@@ -38,7 +38,7 @@ export class UserService extends Service {
     }
 
     public async login(alias: string, password: string): Promise<[UserDTO, string, number]> {
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             if (!await this.userDAO.userExists(alias)) throw new UserError("User does not exist");
             const storedPasswordHash = await this.userDAO.getPasswordHash(alias);
             if (!await bcrypt.compare(password, storedPasswordHash)) throw new UserError("Password is incorrect");
@@ -49,13 +49,13 @@ export class UserService extends Service {
     }
 
     public async logout(token: string): Promise<void> {
-        this.checkForError(async() => {
+        await this.checkForError(async() => {
             await this.authDAO.removeAuth(token);
         });
     };
     
     public async getUser(token: string, alias: string): Promise<UserDTO | null> {
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             await this.checkToken(token);
             const user = await this.userDAO.getUserDTO(alias);
             return user ? user : null;

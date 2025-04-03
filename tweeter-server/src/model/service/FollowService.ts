@@ -22,7 +22,7 @@ export class FollowService extends Service {
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         // This loads everyone I am following
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             await this.checkToken(token);
             const [followeeAliases, hasMorePages] = await this.followsDAO.getPageOfFollowees(userAlias, pageSize, lastItem);
             if (followeeAliases.length === 0) return [[], false];
@@ -38,7 +38,7 @@ export class FollowService extends Service {
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         // This loads everyone following me
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             await this.checkToken(token);
             const [followerAliases, hasMorePages] = await this.followsDAO.getPageOfFollowers(userAlias, pageSize, lastItem);
             if (followerAliases.length === 0) return [[], false];
@@ -51,7 +51,7 @@ export class FollowService extends Service {
         token: string,
         userAlias: string
     ): Promise<number> {
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             await this.checkToken(token);
             const followees: string[] = await this.followsDAO.getFollowees(userAlias);
             return followees ? followees.length : 0;
@@ -62,7 +62,7 @@ export class FollowService extends Service {
         token: string,
         userAlias: string
     ): Promise<number> {
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             await this.checkToken(token);
             const followers: string[] = await this.followsDAO.getFollowers(userAlias);
             return followers ? followers.length : 0;
@@ -74,7 +74,7 @@ export class FollowService extends Service {
         userAlias: string,
         selectedUserAlias: string
     ): Promise<boolean> {
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             await this.checkToken(token);
             if (!userAlias) throw new UserError("Invalid user alias");
             if (!selectedUserAlias) throw new UserError("Invalid selected user alias");
@@ -86,7 +86,7 @@ export class FollowService extends Service {
         token: string,
         userToFollowAlias: string
     ): Promise<[followerCount: number, followeeCount: number]> {
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             await this.checkToken(token);
             if (!userToFollowAlias) throw new UserError("Invalid followee user alias");
             const user = await this.authDAO.getUser(token);
@@ -101,7 +101,7 @@ export class FollowService extends Service {
         token: string,
         userToUnfollowAlias: string
     ): Promise<[followerCount: number, followeeCount: number]> {
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             await this.checkToken(token);
             if (!userToUnfollowAlias) throw new UserError("Invalid followee user alias");
             const user = await this.authDAO.getUser(token);

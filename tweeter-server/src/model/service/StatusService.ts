@@ -1,8 +1,9 @@
-import { FakeData, Status, StatusDTO } from "tweeter-shared";
+import { StatusDTO } from "tweeter-shared";
 import { Service } from "./Service";
 import { Factory } from "../../factory/Factory";
 import { StatusDAO } from "../../dao/status/StatusDAO";
 import { FollowsDAO } from "../../dao/follows/FollowsDAO";
+import { UserError } from "../error/UserError";
 
 export class StatusService extends Service {
     private statusDAO: StatusDAO;
@@ -21,7 +22,7 @@ export class StatusService extends Service {
         lastItem: StatusDTO | null
     ): Promise<[StatusDTO[], boolean]> {
         // This is the statuses posted by people I follow
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             await this.checkToken(token);
             return await this.statusDAO.getPageOfFeedItems(userAlias, pageSize, lastItem);
         });
@@ -34,7 +35,7 @@ export class StatusService extends Service {
         lastItem: StatusDTO | null
     ): Promise<[StatusDTO[], boolean]> {
         // This is the statuses I have posted
-        return this.checkForError(async() => {
+        return await this.checkForError(async() => {
             await this.checkToken(token);
             return await this.statusDAO.getPageOfStoryItems(userAlias, pageSize, lastItem);
         });
@@ -44,13 +45,15 @@ export class StatusService extends Service {
         token: string,
         newStatus: StatusDTO
     ): Promise<void> {
-        // TODO: Call the server to post the status
-        return;
+        // Post status to user's story and to all followers' feeds
+        await this.checkForError(async() => {
+            await this.checkToken(token);
+            const user = await this.authDAO.getUser(token);
+            if (user.alias !== newStatus.user.alias) throw new UserError("Auth token owner does not match status author");
+            await this.statusDAO.postToStory(newStatus);
+            const followerAliases: string[] = await this.followsDAO.getFollowers(user.alias);
+            if (followerAliases.length === 0) return;
+            await this.statusDAO.updateFeeds(followerAliases, newStatus);
+        });
     };
-    
-    private async getFakeData(lastItem: StatusDTO | null, pageSize: number): Promise<[StatusDTO[], boolean]> {
-        const [items, hasMore] = FakeData.instance.getPageOfStatuses(Status.fromDTO(lastItem), pageSize);
-        const dtos = items.map((status) => status.getDTO());
-        return [dtos, hasMore];
-    }
 }
