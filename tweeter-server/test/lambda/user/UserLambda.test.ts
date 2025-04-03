@@ -2,7 +2,15 @@ import { handler as registerHandler } from "../../../src/lambda/user/action/Regi
 import { handler as loginHandler } from "../../../src/lambda/user/action/LoginLambda";
 import { handler as logoutHandler } from "../../../src/lambda/user/action/LogoutLambda";
 import { handler as getUserHandler } from "../../../src/lambda/user/GetUserLambda";
-import { TOKEN } from "../../../src/config";
+import { UserDTO } from "tweeter-shared";
+import { getNewUser } from "../getNewUser";
+
+let alias: string;
+let user: UserDTO;
+let token: string;
+beforeAll(async() => {
+    [alias, user, token] = await getNewUser();
+});
 
 describe("RegisterLambda", () => {
     it("handler function works", async() => {
@@ -23,7 +31,7 @@ describe("RegisterLambda", () => {
 describe("LoginLambda", () => {
     it("handler function works", async() => {
         const request = {
-            "alias": "alias",
+            "alias": alias,
             "password": "password"
         };
         const res = await loginHandler(request);
@@ -46,8 +54,8 @@ describe("LogoutLambda", () => {
 describe("GetUserLambda", () => {
     it("handler function works", async() => {
         const request = {
-            "token": TOKEN,
-            "alias": "@frank"
+            "token": token,
+            "alias": alias
         }
         const res = await getUserHandler(request);
         expect(res.success).toBeTruthy();

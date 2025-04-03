@@ -1,9 +1,9 @@
 import { StatusDTO } from "tweeter-shared";
 import { StatusDAO } from "./StatusDAO";
-import { DynamoDBDAO } from "../DynamoDBDAO";
 import { BatchWriteCommand, PutCommand, QueryCommand, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DyanmoDBPagedDAO } from "../DynamoDBPagedDAO";
 
-export class DynamoDBStatusDAO extends DynamoDBDAO implements StatusDAO {
+export class DynamoDBStatusDAO extends DyanmoDBPagedDAO implements StatusDAO {
     private feedTableName = "feed";
     private storyTableName = "story";
 
@@ -13,12 +13,9 @@ export class DynamoDBStatusDAO extends DynamoDBDAO implements StatusDAO {
             KeyConditionExpression: "alias = :alias",
             ExpressionAttributeValues: {":alias": alias},
             Limit: pageSize,
-            ExclusiveStartKey: lastItem ? {
-                alias: alias,
-                timestamp: lastItem.timestamp
-            } : undefined
+            ExclusiveStartKey: lastItem ? this.generateStartKey(alias, lastItem.timestamp) : undefined
         };
-        return await this.getQueryResponse(params);
+        return await this.getPage<StatusDTO>(params, "status");
     }
     
     public async getPageOfStoryItems(alias: string, pageSize: number, lastItem: StatusDTO | null): Promise<[StatusDTO[], boolean]> {
@@ -27,22 +24,15 @@ export class DynamoDBStatusDAO extends DynamoDBDAO implements StatusDAO {
             KeyConditionExpression: "alias = :alias",
             ExpressionAttributeValues: {":alias": alias},
             Limit: pageSize,
-            ExclusiveStartKey: lastItem ? {
-                alias: alias,
-                timestamp: lastItem.timestamp
-            } : undefined
+            ExclusiveStartKey: lastItem ? this.generateStartKey(alias, lastItem.timestamp) : undefined
         };
-        return await this.getQueryResponse(params);
+        return await this.getPage<StatusDTO>(params, "status");
     }
 
     public async postToStory(status: StatusDTO): Promise<void> {
         const params = {
             TableName: this.storyTableName,
-            Item: {
-                alias: status.user.alias,
-                timestamp: status.timestamp,
-                status: status
-            }
+            Item: this.generateStatusKey(status.user.alias, status)
         };
         await this.client.send(new PutCommand(params));
     }
@@ -52,15 +42,10 @@ export class DynamoDBStatusDAO extends DynamoDBDAO implements StatusDAO {
             const followerBatch = followerAliases.slice(i, i + 25).map((alias) => {
                 return {
                     PutRequest: {
-                        Item: {
-                            alias: alias,
-                            timestamp: status.timestamp,
-                            status: status
-                        }
+                        Item: this.generateStatusKey(alias, status)
                     }
                 }
             });
-
             const params = {
                 TableName: this.feedTableName,
                 RequestItems: {
@@ -70,12 +55,19 @@ export class DynamoDBStatusDAO extends DynamoDBDAO implements StatusDAO {
             await this.client.send(new BatchWriteCommand(params));
         }
     }
-    
-    private async getQueryResponse(params: QueryCommandInput): Promise<[StatusDTO[], boolean]> {
-        const res = await this.client.send(new QueryCommand(params));
-        const statuses: StatusDTO[] = [];
-        res.Items?.forEach((item) => statuses.push(item.status));
-        const hasMore = res.LastEvaluatedKey !== undefined;
-        return [statuses, hasMore];
+
+    private generateStartKey(alias: string, timestamp: number) {
+        return {
+            alias: alias,
+            timestamp: timestamp
+        };
+    }
+
+    private generateStatusKey(alias: string, status: StatusDTO) {
+        return {
+            alias: alias,
+            timestamp: status.timestamp,
+            status: status
+        };
     }
 }

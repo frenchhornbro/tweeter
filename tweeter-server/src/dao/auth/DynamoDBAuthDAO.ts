@@ -19,33 +19,28 @@ export class DynamoDBAuthDAO extends DynamoDBDAO implements AuthDAO {
     }
 
     public async removeAuth(token: string): Promise<void> {
-        const params = {
-            TableName: this.tablename,
-            Key: {token: token}
-        };
-        await this.client.send(new DeleteCommand(params));
+        await this.client.send(new DeleteCommand(this.generateAuthParams(token)));
     }
 
     public async authExists(token: string): Promise<boolean> {
-        const params = {
-            TableName: this.tablename,
-            Key: {token: token}
-        };
-        const res = await this.client.send(new GetCommand(params));
+        const res = await this.client.send(new GetCommand(this.generateAuthParams(token)));
         return res.Item !== undefined;
     }
 
     public async getUser(token: string): Promise<UserDTO> {
-        const params = {
-            TableName: this.tablename,
-            Key: {token: token}
-        };
-        const res = await this.client.send(new GetCommand(params));
+        const res = await this.client.send(new GetCommand(this.generateAuthParams(token)));
         return {
             firstname: res.Item?.firstName,
             lastname: res.Item?.lastName,
             alias: res.Item?.alias,
             imageURL: res.Item?.s3Link
+        };
+    }
+
+    private generateAuthParams(token: string) {    
+        return {
+            TableName: this.tablename,
+            Key: {token: token}
         };
     }
 }
