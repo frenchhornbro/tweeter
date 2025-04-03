@@ -25,11 +25,10 @@ export class UserService extends Service {
         userImageBytes: Uint8Array,
         imageFileExtension: string
     ): Promise<[UserDTO, string, number]> {
-        // TODO: Figure out what to do with the image file exension (should that be used for ContentType?)
         return await this.checkForError(async() => {
             if (await this.userDAO.userExists(alias)) throw new UserError("Alias is already taken");
             const imageStringBase64: string = Buffer.from(userImageBytes).toString("base64");
-            const imageURL = await this.imageDAO.putImage(alias, imageStringBase64); //Using the alias as the filename
+            const imageURL = await this.imageDAO.putImage(alias, imageStringBase64, imageFileExtension); //Using the alias as the filename
             const passwordHash = await this.generateHash(password);
             await this.userDAO.addUser(firstname, lastname, alias, passwordHash, imageURL);
             const authToken = await this.addAuth(alias);
