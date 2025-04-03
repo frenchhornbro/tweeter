@@ -14,7 +14,7 @@ const ItemScroller = <T extends User | Status>(props: Props<T>) => {
     const { displayErrorMessage } = useToastListener();
     const [items, setItems] = useState<T[]>([]);
     const [newItems, setNewItems] = useState<T[]>([]);
-    const [changedDisplayedUser, setChangedDisplayedUser] = useState(true);
+    const [changedDisplayedUser, setChangedDisplayedUser] = useState(false);
 
     const { displayedUser, authToken } = useUserInfo();
 
@@ -25,16 +25,12 @@ const ItemScroller = <T extends User | Status>(props: Props<T>) => {
 
     // Load initial items whenever the displayed user changes. Done in a separate useEffect hook so the changes from reset will be visible.
     useEffect(() => {
-        if(changedDisplayedUser) {
-        loadMoreItems();
-        }
+        if(changedDisplayedUser) loadMoreItems();
     }, [changedDisplayedUser]);
 
     // Add new items whenever there are new items to add
     useEffect(() => {
-        if(newItems) {
-        setItems([...items, ...newItems]);
-        }
+        if(newItems) setItems([...items, ...newItems]);
     }, [newItems])
 
     const reset = async () => {

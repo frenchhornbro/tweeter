@@ -10,10 +10,8 @@ export class ClientCommunicator {
     public async doPost<REQ extends TweeterRequest, RES extends TweeterResponse>(req: REQ | undefined, endpoint: string, headers?: Headers): Promise<RES> {
         if (headers && req) headers.append("Content-type", "application/json");
         else if (req) headers = new Headers({"Content-type": "application/json"});
-        console.log(`req body: ${JSON.stringify(req)}`);
         const url = this.SERVER_URL + endpoint;
         const params = this.getParams("POST", headers, req ? JSON.stringify(req) : req);
-        console.log(`Fetching ${url} with params ${JSON.stringify(params)}`);
 
         try {
             const res: Response = await fetch(url, params);
