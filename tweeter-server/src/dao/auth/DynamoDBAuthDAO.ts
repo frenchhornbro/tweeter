@@ -1,7 +1,7 @@
 import { AuthToken, UserDTO } from "tweeter-shared";
 import { AuthDAO } from "./AuthDAO";
 import { DynamoDBDAO } from "../DynamoDBDAO";
-import { DeleteCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
 export class DynamoDBAuthDAO extends DynamoDBDAO implements AuthDAO {
     private readonly tablename = "auth";
@@ -11,11 +11,23 @@ export class DynamoDBAuthDAO extends DynamoDBDAO implements AuthDAO {
             TableName: this.tablename,
             Item: {
                 token: authToken.token, // partition key
-                timestamp: authToken.timestamp,
+                expires: authToken.timestamp + 60*60*1000,
                 alias: alias
             }
         };
         await this.client.send(new PutCommand(params));
+    }
+
+    public async updateAuth(token: string): Promise<void> {
+        const params = {
+            TableName: this.tablename,
+            Key: {token: token},
+            UpdateExpression: `SET expires = :now`,
+            ExpressionAttributeValues: {
+                ":now": Date.now() + 60*60*1000
+            }
+        };
+        await this.client.send(new UpdateCommand(params));
     }
 
     public async removeAuth(token: string): Promise<void> {

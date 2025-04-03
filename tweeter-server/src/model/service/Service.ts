@@ -26,5 +26,6 @@ export abstract class Service {
 
     protected async checkToken(token: string) {
         if (!await this.authDAO.authExists(token)) throw new UserError("Invalid token");
+        await this.authDAO.updateAuth(token);
     }
 }
