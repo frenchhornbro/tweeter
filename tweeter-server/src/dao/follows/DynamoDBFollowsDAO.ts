@@ -33,20 +33,20 @@ export class DynamoDBFollowsDAO extends DyanmoDBPagedDAO implements FollowsDAO {
     public async getFollowees(alias: string): Promise<string[]> {
         const params = {
             TableName: this.tablename,
-            IndexName: this.indexname,
-            KeyConditionExpression: "followee_handle = :alias",
+            KeyConditionExpression: "follower_handle = :alias",
             ExpressionAttributeValues: {":alias": alias}
         };
-        return (await this.getPage<string>(params, "follower_handle"))[0];
+        return (await this.getPage<string>(params, "followee_handle"))[0];
     }
     
     public async getFollowers(alias: string): Promise<string[]> {
         const params = {
             TableName: this.tablename,
-            KeyConditionExpression: "follower_handle = :alias",
+            IndexName: this.indexname,
+            KeyConditionExpression: "followee_handle = :alias",
             ExpressionAttributeValues: {":alias": alias},
         };
-        return (await this.getPage<string>(params, "followee_handle"))[0];
+        return (await this.getPage<string>(params, "follower_handle"))[0];
     }
 
     public async getIsFollowerStatus(alias: string, selectedUserAlias: string): Promise<boolean> {
