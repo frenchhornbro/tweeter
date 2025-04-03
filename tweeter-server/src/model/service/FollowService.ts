@@ -22,7 +22,9 @@ export class FollowService extends Service {
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         // This loads everyone I am following
-        return await this.loadMoreUserItems(token, userAlias, pageSize, lastItem, this.followsDAO.getPageOfFollowees);
+       const res = await this.loadMoreUserItems(token, userAlias, pageSize, lastItem, this.followsDAO.getPageOfFollowees);
+       console.log(`Returning to user: ${JSON.stringify(res)}`);
+       return res;
     }
     
     public async loadMoreFollowers(

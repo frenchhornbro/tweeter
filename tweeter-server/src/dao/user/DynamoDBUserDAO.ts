@@ -63,7 +63,7 @@ export class DynamoDBUserDAO extends DynamoDBDAO implements UserDAO {
         };
         const res = await this.client.send(new BatchGetCommand(params));
         if (!res.Responses) return [];
-        return res.Responses[this.tablename].map<UserDTO>(
+        const userDTOs = res.Responses[this.tablename].map<UserDTO>(
             (item) => ({
                 firstname: item["firstName"],
                 lastname: item["lastName"],
@@ -71,5 +71,6 @@ export class DynamoDBUserDAO extends DynamoDBDAO implements UserDAO {
                 imageURL: item["s3Link"]
             })
         );
+        return userDTOs.sort((a: UserDTO, b: UserDTO) => a.alias.localeCompare(b.alias));
     }
 }

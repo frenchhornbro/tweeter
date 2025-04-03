@@ -14,7 +14,7 @@ export class DynamoDBFollowsDAO extends DyanmoDBPagedDAO implements FollowsDAO {
             KeyConditionExpression: "followee_handle = :alias",
             ExpressionAttributeValues: {":alias": alias},
             Limit: pageSize,
-            ExclusiveStartKey: lastItem ? this.generateFollowKey(alias, lastItem.alias) : undefined
+            ExclusiveStartKey: lastItem ? this.generateFollowKey(lastItem.alias, alias) : undefined
         };
         return await this.getPage(params, "follower_handle");
     }
@@ -25,7 +25,7 @@ export class DynamoDBFollowsDAO extends DyanmoDBPagedDAO implements FollowsDAO {
             KeyConditionExpression: "follower_handle = :alias",
             ExpressionAttributeValues: {":alias": alias},
             Limit: pageSize,
-            ExclusiveStartKey: lastItem ? this.generateFollowKey(lastItem.alias, alias) : undefined
+            ExclusiveStartKey: lastItem ? this.generateFollowKey(alias, lastItem.alias) : undefined
         };
         return await this.getPage(params, "followee_handle");
     }
