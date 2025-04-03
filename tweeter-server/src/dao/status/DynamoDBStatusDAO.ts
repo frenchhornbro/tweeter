@@ -12,6 +12,7 @@ export class DynamoDBStatusDAO extends DyanmoDBPagedDAO implements StatusDAO {
             TableName: this.feedTableName,
             KeyConditionExpression: "alias = :alias",
             ExpressionAttributeValues: {":alias": alias},
+            ScanIndexForward: false,
             Limit: pageSize,
             ExclusiveStartKey: lastItem ? this.generateStartKey(alias, lastItem.timestamp) : undefined
         };
@@ -23,6 +24,7 @@ export class DynamoDBStatusDAO extends DyanmoDBPagedDAO implements StatusDAO {
             TableName: this.storyTableName,
             KeyConditionExpression: "alias = :alias",
             ExpressionAttributeValues: {":alias": alias},
+            ScanIndexForward: false,
             Limit: pageSize,
             ExclusiveStartKey: lastItem ? this.generateStartKey(alias, lastItem.timestamp) : undefined
         };
