@@ -1,8 +1,8 @@
 import { AuthenticationRequest, AuthenticationResponse } from "tweeter-shared";
 import { UserService } from "../../../model/service/UserService";
-import { superHandler } from "./AuthenticateLambda";
+import { authenticateHandler } from "./AuthenticateLambda";
 import { DynamoDBFactory } from "../../../factory/DynamoDBFactory";
 
-export const handler = async(request: AuthenticationRequest): Promise<AuthenticationResponse> => {
-    return await superHandler(new UserService(new DynamoDBFactory()).login, request.alias, request.password);
+export const loginHandler = async(request: AuthenticationRequest): Promise<AuthenticationResponse> => {
+    return await authenticateHandler(new UserService(new DynamoDBFactory()).login, request.alias, request.password);
 };

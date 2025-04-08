@@ -1,7 +1,7 @@
 import { UserDTO } from "tweeter-shared";
-import { handler as feedHandler } from "../../../src/lambda/status/load/GetFeedItemsLambda";
-import { handler as storyHandler } from "../../../src/lambda/status/load/GetStoryItemsLambda";
-import { handler as postStatusHandler } from "../../../src/lambda/status/PostStatusLambda";``
+import { getFeedItemsHandler } from "../../../src/lambda/status/load/GetFeedItemsLambda";
+import { getStoryItemsHandler } from "../../../src/lambda/status/load/GetStoryItemsLambda";
+import { postStatusHandler } from "../../../src/lambda/status/PostStatusLambda";``
 import { getNewUser } from "../getNewUser";
 
 let alias: string;
@@ -19,7 +19,7 @@ describe("GetFeedItemLambda", () => {
             "pageSize": 3,
             "lastItem": null
         };
-        const res = await feedHandler(request);
+        const res = await getFeedItemsHandler(request);
         expect(res.success).toBeTruthy();
         expect(res.message).toBeNull();
     });
@@ -33,7 +33,7 @@ describe("GetStoryItemLambda", () => {
             "pageSize": 3,
             "lastItem": null
         };
-        const res = await storyHandler(request);
+        const res = await getStoryItemsHandler(request);
         expect(res.success).toBeTruthy();
         expect(res.message).toBeNull();
     });

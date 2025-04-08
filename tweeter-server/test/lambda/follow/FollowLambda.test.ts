@@ -1,9 +1,9 @@
-import { handler as followeesHandler } from "../../../src/lambda/follow/userItem/GetFolloweesLambda"
-import { handler as followerCountHandler } from "../../../src/lambda/follow/count/GetFollowerCountLambda";
-import { handler as followeeCountHandler } from "../../../src/lambda/follow/count/GetFolloweeCountLambda";
-import { handler as isFollowerHandler } from "../../../src/lambda/follow/GetIsFollowerStatusLambda";
-import { handler as followHandler } from "../../../src/lambda/follow/action/FollowLambda";
-import { handler as unfollowHandler } from "../../../src/lambda/follow/action/UnfollowLambda";
+import { getFolloweesHandler } from "../../../src/lambda/follow/userItem/GetFolloweesLambda"
+import { getFollowerCountHandler } from "../../../src/lambda/follow/count/GetFollowerCountLambda";
+import { getFolloweeCountHandler } from "../../../src/lambda/follow/count/GetFolloweeCountLambda";
+import { getIsFollowerStatusHandler } from "../../../src/lambda/follow/GetIsFollowerStatusLambda";
+import { followHandler } from "../../../src/lambda/follow/action/FollowLambda";
+import { unfollowHandler } from "../../../src/lambda/follow/action/UnfollowLambda";
 import { UserDTO } from "tweeter-shared";
 import { getNewUser } from "../getNewUser";
 
@@ -23,7 +23,7 @@ describe("GetFolloweesLambda", () => {
             "lastItem": null
         };
 
-        const res = await followeesHandler(followRequest);
+        const res = await getFolloweesHandler(followRequest);
         expect(res.success).toBeTruthy();
         expect(res.message).toBeNull();
     });
@@ -36,7 +36,7 @@ describe("GetFollowerCountLambda", () => {
             userAlias: alias
         };
         
-        const res = await followerCountHandler(followCountRequest);
+        const res = await getFollowerCountHandler(followCountRequest);
         expect(res.success).toBeTruthy();
         expect(res.message).toBeNull();
         expect(res.count).toBe(0);
@@ -50,7 +50,7 @@ describe("GetFolloweeCountLambda", () => {
             userAlias: alias
         };
         
-        const res = await followeeCountHandler(followCountRequest);
+        const res = await getFolloweeCountHandler(followCountRequest);
         expect(res.success).toBeTruthy();
         expect(res.message).toBeNull();
     });
@@ -63,7 +63,7 @@ describe("GetIsFollowerStatusLambda", () => {
             userAlias: alias,
             selectedUserAlias: "@bob"
         };
-        const res = await isFollowerHandler(isFollowerRequest);
+        const res = await getIsFollowerStatusHandler(isFollowerRequest);
         expect(res.success).toBeTruthy();
         expect(res.message).toBeNull();
     });

@@ -1,7 +1,7 @@
-import { handler as registerHandler } from "../../../src/lambda/user/action/RegisterLambda";
-import { handler as loginHandler } from "../../../src/lambda/user/action/LoginLambda";
-import { handler as logoutHandler } from "../../../src/lambda/user/action/LogoutLambda";
-import { handler as getUserHandler } from "../../../src/lambda/user/GetUserLambda";
+import { registerHandler } from "../../../src/lambda/user/action/RegisterLambda";
+import { loginHandler } from "../../../src/lambda/user/action/LoginLambda";
+import { logoutHandler } from "../../../src/lambda/user/action/LogoutLambda";
+import { getUserHandler } from "../../../src/lambda/user/GetUserLambda";
 import { UserDTO } from "tweeter-shared";
 import { getNewUser } from "../getNewUser";
 
