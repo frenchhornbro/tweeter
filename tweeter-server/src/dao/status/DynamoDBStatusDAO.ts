@@ -1,6 +1,6 @@
 import { StatusDTO } from "tweeter-shared";
 import { StatusDAO } from "./StatusDAO";
-import { BatchWriteCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand } from "@aws-sdk/lib-dynamodb";
 import { DyanmoDBPagedDAO } from "../DynamoDBPagedDAO";
 
 export class DynamoDBStatusDAO extends DyanmoDBPagedDAO implements StatusDAO {
@@ -37,25 +37,6 @@ export class DynamoDBStatusDAO extends DyanmoDBPagedDAO implements StatusDAO {
             Item: this.generateStatusKey(status.user.alias, status)
         };
         await this.client.send(new PutCommand(params));
-    }
-    
-    public async updateFeeds(followerAliases: string[], status: StatusDTO): Promise<void> {
-        for (let i = 0; i < followerAliases.length; i += 25) {
-            const followerBatch = followerAliases.slice(i, i + 25).map((alias) => {
-                return {
-                    PutRequest: {
-                        Item: this.generateStatusKey(alias, status)
-                    }
-                }
-            });
-            const params = {
-                TableName: this.feedTableName,
-                RequestItems: {
-                    [this.feedTableName]: followerBatch
-                }
-            };
-            await this.client.send(new BatchWriteCommand(params));
-        }
     }
 
     private generateStartKey(alias: string, timestamp: number) {

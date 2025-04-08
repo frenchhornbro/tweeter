@@ -2,17 +2,17 @@ import { StatusDTO } from "tweeter-shared";
 import { Service } from "./Service";
 import { Factory } from "../../factory/Factory";
 import { StatusDAO } from "../../dao/status/StatusDAO";
-import { FollowsDAO } from "../../dao/follows/FollowsDAO";
 import { UserError } from "../error/UserError";
+import { QueueDAO } from "../../dao/queue/QueueDAO";
 
 export class StatusService extends Service {
     private statusDAO: StatusDAO;
-    private followsDAO: FollowsDAO;
+    private queueDAO: QueueDAO;
 
     public constructor(factory: Factory) {
         super(factory);
         this.statusDAO = factory.getStatusDAO();
-        this.followsDAO = factory.getFollowsDAO();
+        this.queueDAO = factory.getQueueDAO();
     }
 
     public async loadMoreFeedItems(
@@ -51,9 +51,7 @@ export class StatusService extends Service {
             const user = await this.authDAO.getUser(token);
             if (user.alias !== newStatus.user.alias) throw new UserError("Auth token owner does not match status author");
             await this.statusDAO.postToStory(newStatus);
-            const followerAliases: string[] = await this.followsDAO.getFollowers(user.alias);
-            if (followerAliases.length === 0) return;
-            await this.statusDAO.updateFeeds(followerAliases, newStatus);
+            this.queueDAO.sendToPostStatusQueue(newStatus);
         });
     };
 }
