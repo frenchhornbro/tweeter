@@ -1,17 +1,19 @@
 # Tweeter-Web
 
-## Running the Project
-Run the project by running 'npm start' from within the 'tweeter-web' folder.
-A starter project for the Tweeter Web application.
+## Running the Application
+Run the project by running 'npm run start' from within the 'tweeter-web' folder. This will run Vite and should automatically open up http://localhost:5173 to access the application.
 
 ## Experience
-This project is focused on giving me experience with implementing software design principles. Some include:
+I did not write the frontend code for this project, but I refactored it to remove code duplicaiton and follow MVP. I created the backend and implemented it in AWS using Lambda functions for the service, DynamoDB for the database, and (in progress) SQS for queueing functions for Lambda.
 
-- Layered architecture (MVP)
+This project is focused on giving me experience with implementing software design principles. Some include:
 - Single-responsibility principle
 - Avoid code duplication
-- Abstract factory method
-- Dependency inversion
+- Layered architecture (MVP) (in frontend)
+- Abstract factory method (in backend)
+
+## Future Improvements
+This application is fully functional. However, it does need some adjustments to allow posting a status for a user with a large number of followers. This will be implemented by sending requests to a queue via SQS and processing those requests with a lambda function. This will make the perceived time of posting for the user just about a second, but the actual updating of all the followers' feeds will take up to a couple of minutes to finish processing.
 
 ## Setting Up the Project
 1. cd into the project root folder
