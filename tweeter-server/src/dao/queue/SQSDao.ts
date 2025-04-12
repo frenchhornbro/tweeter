@@ -1,4 +1,3 @@
-import { StatusDTO } from "tweeter-shared";
 import { QueueDAO } from "./QueueDAO";
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 
@@ -9,11 +8,10 @@ export class SQSDAO implements QueueDAO {
         this.sqsClient = new SQSClient();
     }
 
-    public async sendToPostStatusQueue(status: StatusDTO): Promise<void> {
+    public async sendToQueue(objectToSend: any, queueName: string): Promise<void> {
         const params = {
-            QueueUrl: "https://sqs.us-east-1.amazonaws.com/891377292039/Tweeter-Post-Status-Queue",
-            MessageBody: JSON.stringify(status),
-            DelaySeconds: 10
+            QueueUrl: `https://sqs.us-east-1.amazonaws.com/891377292039/${queueName}`,
+            MessageBody: JSON.stringify(objectToSend)
         };
         await this.sqsClient.send(new SendMessageCommand(params));
     }

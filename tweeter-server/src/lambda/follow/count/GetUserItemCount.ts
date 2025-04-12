@@ -2,7 +2,7 @@ import { UserItemCountRequest, UserItemCountResponse } from "tweeter-shared";
 import { FollowService } from "../../../model/service/FollowService";
 import { DynamoDBFactory } from "../../../factory/DynamoDBFactory";
 
-export const getUserItemCountHandler = async(request: UserItemCountRequest, serviceMethod: (token: string, userAlias: string) => Promise<number>): Promise<UserItemCountResponse> => {
+export const getUserItemCount = async(request: UserItemCountRequest, serviceMethod: (token: string, userAlias: string) => Promise<number>): Promise<UserItemCountResponse> => {
     const count = await serviceMethod.call(new FollowService(new DynamoDBFactory()), request.token, request.userAlias);
     return {
         success: true,

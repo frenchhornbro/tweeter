@@ -1,4 +1,4 @@
-import { StatusDTO } from "tweeter-shared";
+import { UpdateFeedDTO, StatusDTO, PostStatusDTO } from "tweeter-shared";
 import { Service } from "./Service";
 import { Factory } from "../../factory/Factory";
 import { StatusDAO } from "../../dao/status/StatusDAO";
@@ -51,7 +51,23 @@ export class StatusService extends Service {
             const user = await this.authDAO.getUser(token);
             if (user.alias !== newStatus.user.alias) throw new UserError("Auth token owner does not match status author");
             await this.statusDAO.postToStory(newStatus);
-            this.queueDAO.sendToPostStatusQueue(newStatus);
+            const sendObject: PostStatusDTO = {
+                token: token,
+                status: newStatus
+            };
+            await this.queueDAO.sendToQueue(sendObject, "Tweeter-Post-Status-Queue");
         });
     };
+
+    public async updateFeed(followerAliases: string[][], status: StatusDTO): Promise<void> {
+        await this.checkForError(async() => {
+            for (const followerList of followerAliases) {
+                const statusInfo: UpdateFeedDTO = {
+                    status: status,
+                    followerAliases: followerList
+                };
+                await this.queueDAO.sendToQueue(statusInfo, "Tweeter-Update-Feed-Queue");
+            }
+        });
+    }
 }

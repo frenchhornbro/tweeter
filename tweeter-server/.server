@@ -1,19 +1,20 @@
 BUCKET='hyrum-durfee-cs340'
 LAMBDA_ROLE='arn:aws:iam::891377292039:role/CS-340-Tweeter-Lambda'
 EDIT_LAMBDALIST='
-tweeterGetFollowees | lambda/follow/userItem/GetFolloweesLambda.handler
-tweeterGetFollowers | lambda/follow/userItem/GetFollowersLambda.handler
-tweeterGetFollowerCount | lambda/follow/count/GetFollowerCountLambda.handler
-tweeterGetFolloweeCount | lambda/follow/count/GetFolloweeCountLambda.handler
-tweeterGetIsFollowerStatus | lambda/follow/GetIsFollowerStatusLambda.handler
-tweeterFollow | lambda/follow/action/FollowLambda.handler
-tweeterUnfollow | lambda/follow/action/UnfollowLambda.handler
-tweeterGetFeedItems | lambda/status/load/GetFeedItemsLambda.handler
-tweeterGetStoryItems | lambda/status/load/GetStoryItemsLambda.handler
-tweeterPostStatus | lambda/status/PostStatusLambda.handler
-tweeterRegister | lambda/user/action/RegisterLambda.handler
-tweeterLogin | lambda/user/action/LoginLambda.handler
-tweeterLogout | lambda/user/action/LogoutLambda.handler
-tweeterGetUser | lambda/user/GetUserLambda.handler
+tweeterGetFollowees | lambda/follow/userItem/GetFolloweesLambda.getFolloweesHandler
+tweeterGetFollowers | lambda/follow/userItem/GetFollowersLambda.getFollowersHandler
+tweeterGetFollowerCount | lambda/follow/count/GetFollowerCountLambda.getFollowerCountHandler
+tweeterGetFolloweeCount | lambda/follow/count/GetFolloweeCountLambda.getFolloweeCountHandler
+tweeterGetIsFollowerStatus | lambda/follow/GetIsFollowerStatusLambda.getIsFollowerStatusHandler
+tweeterFollow | lambda/follow/action/FollowLambda.followHandler
+tweeterUnfollow | lambda/follow/action/UnfollowLambda.unfollowHandler
+tweeterGetFeedItems | lambda/status/load/GetFeedItemsLambda.getFeedItemsHandler
+tweeterGetStoryItems | lambda/status/load/GetStoryItemsLambda.getStoryItemsHandler
+tweeterPostStatus | lambda/status/post/PostStatusLambda.postStatusHandler
+tweeterPostUpdateFeedMessage | lambda/status/post/PostUpdateFeedMessageLambda.postUpdateFeedMessageHandler
+tweeterRegister | lambda/user/action/RegisterLambda.registerHandler
+tweeterLogin | lambda/user/action/LoginLambda.loginHandler
+tweeterLogout | lambda/user/action/LogoutLambda.logoutHandler
+tweeterGetUser | lambda/user/GetUserLambda.getUserHandler
 '
-LAMBDALAYER_ARN='arn:aws:lambda:us-east-1:891377292039:layer:CS340-Tweeter:17'
+LAMBDALAYER_ARN='arn:aws:lambda:us-east-1:891377292039:layer:CS340-Tweeter:18'

@@ -1,4 +1,4 @@
-import { UserDTO } from "tweeter-shared";
+import { PostStatusDTO, UserDTO } from "tweeter-shared";
 import { Service } from "./Service";
 import { Factory } from "../../factory/Factory";
 import { FollowsDAO } from "../../dao/follows/FollowsDAO";
@@ -22,9 +22,7 @@ export class FollowService extends Service {
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         // This loads everyone I am following
-       const res = await this.loadMoreUserItems(token, userAlias, pageSize, lastItem, this.followsDAO.getPageOfFollowees);
-       console.log(`Returning to user: ${JSON.stringify(res)}`);
-       return res;
+        return await this.loadMoreUserItems(token, userAlias, pageSize, lastItem, this.followsDAO.getPageOfFollowees);
     }
     
     public async loadMoreFollowers(
@@ -61,6 +59,26 @@ export class FollowService extends Service {
             if (!userAlias) throw new UserError("Invalid user alias");
             if (!selectedUserAlias) throw new UserError("Invalid selected user alias");
             return await this.followsDAO.getIsFollowerStatus(userAlias, selectedUserAlias);
+        });
+    }
+
+    public async getGroupedFollowers(request: PostStatusDTO): Promise<string[][]> {
+        return await this.checkForError(async() => {
+            const userAlias: string = request.status.user.alias;
+            const token: string = request.token;
+            let lastItem: UserDTO | null = null;
+            const allFollowerAliases: string[][] = [];
+            let hasMoreFollowers = true;
+            const MAX_BATCH_SIZE = 25;
+            while (hasMoreFollowers) {
+                const [followers, hasMore] = await this.loadMoreFollowers(token, userAlias, MAX_BATCH_SIZE, lastItem);
+                const followerAliasList: string[] = []
+                followers.forEach((user) => followerAliasList.push(user.alias));
+                allFollowerAliases.push(followerAliasList);
+                hasMoreFollowers = hasMore;
+                lastItem = followers[followers.length-1];
+            }
+            return allFollowerAliases;
         });
     }
 

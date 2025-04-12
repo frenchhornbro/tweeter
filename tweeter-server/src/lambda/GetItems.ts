@@ -2,7 +2,7 @@ import { PagedItemRequest, PagedItemResponse, StatusDTO, UserDTO } from "tweeter
 import { StatusService } from "../model/service/StatusService";
 import { FollowService } from "../model/service/FollowService";
 
-export const getItemsHandler = async<T extends StatusDTO | UserDTO, U extends StatusService | FollowService>(request: PagedItemRequest<T>,
+export const getItems = async<T extends StatusDTO | UserDTO, U extends StatusService | FollowService>(request: PagedItemRequest<T>,
     service: U, serviceMethod: (
         token: string,
         userAlias: string,

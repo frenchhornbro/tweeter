@@ -1,7 +1,7 @@
 import { UserDTO } from "tweeter-shared";
 import { getFeedItemsHandler } from "../../../src/lambda/status/load/GetFeedItemsLambda";
 import { getStoryItemsHandler } from "../../../src/lambda/status/load/GetStoryItemsLambda";
-import { postStatusHandler } from "../../../src/lambda/status/PostStatusLambda";``
+import { postStatusHandler } from "../../../src/lambda/status/post/PostStatusLambda";``
 import { getNewUser } from "../getNewUser";
 
 let alias: string;

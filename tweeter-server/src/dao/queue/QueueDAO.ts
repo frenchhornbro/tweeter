@@ -1,5 +1,3 @@
-import { StatusDTO } from "tweeter-shared";
-
 export interface QueueDAO {
-    sendToPostStatusQueue: (status: StatusDTO) => Promise<void>;
+    sendToQueue: (objectToSend: any, queueName: string) => Promise<void>;
 }
