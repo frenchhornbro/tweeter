@@ -1,18 +1,21 @@
-import { PostStatusDTO, UserDTO } from "tweeter-shared";
+import { StatusDTO, UpdateFeedRequest, UserDTO } from "tweeter-shared";
 import { Service } from "./Service";
 import { Factory } from "../../factory/Factory";
 import { FollowsDAO } from "../../dao/follows/FollowsDAO";
 import { UserDAO } from "../../dao/user/UserDAO";
 import { UserError } from "../error/UserError";
+import { QueueDAO } from "../../dao/queue/QueueDAO";
 
 export class FollowService extends Service {
     private followsDAO: FollowsDAO;
     private userDAO: UserDAO;
+    private queueDAO: QueueDAO;
 
     public constructor(factory: Factory) {
         super(factory);
         this.followsDAO = factory.getFollowsDAO();
         this.userDAO = factory.getUserDAO();
+        this.queueDAO = factory.getQueueDAO();
     }
 
     public async loadMoreFollowees(
@@ -62,23 +65,29 @@ export class FollowService extends Service {
         });
     }
 
-    public async getGroupedFollowers(request: PostStatusDTO): Promise<string[][]> {
+    public async sendFollowerInfoMessage(status: StatusDTO, token: string): Promise<void> {
         return await this.checkForError(async() => {
-            const userAlias: string = request.status.user.alias;
-            const token: string = request.token;
-            let lastItem: UserDTO | null = null;
             const allFollowerAliases: string[][] = [];
-            let hasMoreFollowers = true;
             const MAX_BATCH_SIZE = 25;
+            let lastItem: UserDTO | null = null;
+            let hasMoreFollowers = true;
             while (hasMoreFollowers) {
-                const [followers, hasMore] = await this.loadMoreFollowers(token, userAlias, MAX_BATCH_SIZE, lastItem);
+                const [followers, hasMore] = await this.loadMoreFollowers(token, status.user.alias, MAX_BATCH_SIZE, lastItem);
                 const followerAliasList: string[] = []
                 followers.forEach((user) => followerAliasList.push(user.alias));
                 allFollowerAliases.push(followerAliasList);
                 hasMoreFollowers = hasMore;
                 lastItem = followers[followers.length-1];
             }
-            return allFollowerAliases;
+            await this.checkForError(async() => {
+                for (const followerList of allFollowerAliases) {
+                    const statusInfo: UpdateFeedRequest = {
+                        status: status,
+                        followerAliases: followerList
+                    };
+                    await this.queueDAO.sendToQueue(statusInfo, "Tweeter-Update-Feed-Queue");
+                }
+            });
         });
     }
 

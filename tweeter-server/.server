@@ -12,9 +12,10 @@ tweeterGetFeedItems | lambda/status/load/GetFeedItemsLambda.getFeedItemsHandler
 tweeterGetStoryItems | lambda/status/load/GetStoryItemsLambda.getStoryItemsHandler
 tweeterPostStatus | lambda/status/post/PostStatusLambda.postStatusHandler
 tweeterPostUpdateFeedMessage | lambda/status/post/PostUpdateFeedMessageLambda.postUpdateFeedMessageHandler
+tweeterUpdateFeeds | lambda/status/post/UpdateFeedsLambda.updateFeedsHandler
 tweeterRegister | lambda/user/action/RegisterLambda.registerHandler
 tweeterLogin | lambda/user/action/LoginLambda.loginHandler
 tweeterLogout | lambda/user/action/LogoutLambda.logoutHandler
 tweeterGetUser | lambda/user/GetUserLambda.getUserHandler
 '
-LAMBDALAYER_ARN='arn:aws:lambda:us-east-1:891377292039:layer:CS340-Tweeter:18'
+LAMBDALAYER_ARN='arn:aws:lambda:us-east-1:891377292039:layer:CS340-Tweeter:19'

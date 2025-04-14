@@ -15,8 +15,6 @@ export { AuthToken } from "./model/domain/AuthToken";
 // 
 export type { UserDTO } from "./model/dto/UserDTO";
 export type { StatusDTO } from "./model/dto/StatusDTO";
-export type { PostStatusDTO } from "./model/dto/PostStatusDTO";
-export type { UpdateFeedDTO } from "./model/dto/UpdateFeedDTO";
 
 // 
 // Requests
@@ -28,6 +26,7 @@ export type { UserItemCountRequest } from "./model/net/request/follow/UserItemCo
 export type { IsFollowerRequest } from "./model/net/request/follow/IsFollowerRequest";
 export type { FollowRequest } from "./model/net/request/follow/FollowRequest";
 export type { PostStatusRequest } from "./model/net/request/status/PostStatusRequest";
+export type { UpdateFeedRequest } from "./model/net/request/status/UpdateFeedRequest";
 export type { RegisterRequest } from "./model/net/request/user/RegisterRequest";
 export type { AuthenticationRequest } from "./model/net/request/user/AuthenticationRequest";
 export type { GetUserRequest } from "./model/net/request/user/GetUserRequest";
