@@ -42,8 +42,3 @@ export type { IsFollowerResponse } from "./model/net/response/follow/IsFollowerR
 export type { FollowResponse } from "./model/net/response/follow/FollowResponse";
 export type { AuthenticationResponse } from "./model/net/response/user/AuthenticationResponse";
 export type { GetUserResponse } from "./model/net/response/user/GetUserResponse";
-
-// 
-// Other
-// 
-export { FakeData } from "./util/FakeData";
