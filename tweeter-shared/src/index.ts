@@ -26,6 +26,7 @@ export type { UserItemCountRequest } from "./model/net/request/follow/UserItemCo
 export type { IsFollowerRequest } from "./model/net/request/follow/IsFollowerRequest";
 export type { FollowRequest } from "./model/net/request/follow/FollowRequest";
 export type { PostStatusRequest } from "./model/net/request/status/PostStatusRequest";
+export type { PostUpdateFeedMessageRequest } from "./model/net/request/status/PostUpdateFeedMessageRequest";
 export type { UpdateFeedRequest } from "./model/net/request/status/UpdateFeedRequest";
 export type { RegisterRequest } from "./model/net/request/user/RegisterRequest";
 export type { AuthenticationRequest } from "./model/net/request/user/AuthenticationRequest";

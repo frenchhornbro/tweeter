@@ -10,6 +10,7 @@ export const updateFeedsHandler = async(event: SQSEvent) => {
         // Execute all messages in the SQS Update Feed Queue
         const body = event.Records[i].body;
         const request = JSON.parse(body) as UpdateFeedRequest;
+        console.log("Calling UpdateFeeds lambda function");
         await statusService.updateFeeds(request.followerAliases, request.status);
     }
 };

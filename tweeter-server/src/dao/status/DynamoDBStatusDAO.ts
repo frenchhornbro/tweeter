@@ -53,7 +53,9 @@ export class DynamoDBStatusDAO extends DyanmoDBPagedDAO implements StatusDAO {
                 [this.feedTableName]: followerBatch
             }
         };
+        console.log(`Updating feed for ${followerAliases.length} followers...`);
         await this.client.send(new BatchWriteCommand(params));
+        console.log("Feed updated");
     }
 
     private generateStartKey(alias: string, timestamp: number) {

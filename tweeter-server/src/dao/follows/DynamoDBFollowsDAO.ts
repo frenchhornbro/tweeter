@@ -1,4 +1,3 @@
-import { UserDTO } from "tweeter-shared";
 import { FollowsDAO } from "./FollowsDAO";
 import { DeleteCommand, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { DyanmoDBPagedDAO } from "../DynamoDBPagedDAO";
@@ -7,27 +6,30 @@ export class DynamoDBFollowsDAO extends DyanmoDBPagedDAO implements FollowsDAO {
     private tablename = "follows";
     private indexname = "follows_index";
 
-    public async getPageOfFollowees(alias: string, pageSize: number, lastItem: UserDTO | null): Promise<[followeeAliases: string[], hasMorePages: boolean]> {
+    public async getPageOfFollowees(alias: string, pageSize: number, lastItemAlias: string | undefined): Promise<[followeeAliases: string[], hasMorePages: boolean]> {
         const params = {
             TableName: this.tablename,
             KeyConditionExpression: "follower_handle = :alias",
             ExpressionAttributeValues: {":alias": alias},
             Limit: pageSize,
-            ExclusiveStartKey: lastItem ? this.generateFollowKey(alias, lastItem.alias) : undefined
+            ExclusiveStartKey: lastItemAlias ? this.generateFollowKey(alias, lastItemAlias) : undefined
         };
         return await this.getPage(params, "followee_handle");
     }
     
-    public async getPageOfFollowers(alias: string, pageSize: number, lastItem: UserDTO | null): Promise<[followerAliases: string[], hasMorePages: boolean]> {
+    public async getPageOfFollowers(alias: string, pageSize: number, lastItemAlias: string | undefined): Promise<[followerAliases: string[], hasMorePages: boolean]> {
         const params = {
             TableName: this.tablename,
             IndexName: this.indexname,
             KeyConditionExpression: "followee_handle = :alias",
             ExpressionAttributeValues: {":alias": alias},
             Limit: pageSize,
-            ExclusiveStartKey: lastItem ? this.generateFollowKey(lastItem.alias, alias) : undefined
+            ReturnConsumedCapacity: "INDEXES" as const,
+            ExclusiveStartKey: lastItemAlias ? this.generateFollowKey(lastItemAlias, alias) : undefined
         };
-        return await this.getPage(params, "follower_handle");
+        const [followerAliases, hasMorePages] = await this.getPage<string>(params, "follower_handle");
+        console.log(`Got page of size ${followerAliases.length}`);
+        return [followerAliases, hasMorePages];
     }
 
     public async getFollowees(alias: string): Promise<string[]> {

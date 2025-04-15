@@ -25,7 +25,7 @@ export class FollowService extends Service {
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         // This loads everyone I am following
-        return await this.loadMoreUserItems(token, userAlias, pageSize, lastItem, this.followsDAO.getPageOfFollowees);
+        return await this.loadMoreUserItems(token, userAlias, pageSize, lastItem?.alias, this.followsDAO.getPageOfFollowees);
     }
     
     public async loadMoreFollowers(
@@ -35,7 +35,7 @@ export class FollowService extends Service {
         lastItem: UserDTO | null
     ): Promise<[UserDTO[], boolean]> {
         // This loads everyone following me
-        return await this.loadMoreUserItems(token, userAlias, pageSize, lastItem, this.followsDAO.getPageOfFollowers);
+        return await this.loadMoreUserItems(token, userAlias, pageSize, lastItem?.alias, this.followsDAO.getPageOfFollowers);
     }
 
     public async getFolloweeCount(
@@ -65,29 +65,38 @@ export class FollowService extends Service {
         });
     }
 
-    public async sendFollowerInfoMessage(status: StatusDTO, token: string): Promise<void> {
+    public async sendFollowerInfoMessage(status: StatusDTO): Promise<void> {
         return await this.checkForError(async() => {
             const allFollowerAliases: string[][] = [];
-            const MAX_BATCH_SIZE = 25;
-            let lastItem: UserDTO | null = null;
+            const BATCH_SIZE = 10_000;
+            let lastItem: string | undefined = undefined;
             let hasMoreFollowers = true;
             while (hasMoreFollowers) {
-                const [followers, hasMore] = await this.loadMoreFollowers(token, status.user.alias, MAX_BATCH_SIZE, lastItem);
-                const followerAliasList: string[] = []
-                followers.forEach((user) => followerAliasList.push(user.alias));
-                allFollowerAliases.push(followerAliasList);
+                console.log(`Getting next 10,000 followers`);
+                const [followerAliases, hasMore] = await this.followsDAO.getPageOfFollowers(status.user.alias, BATCH_SIZE, lastItem);
+                allFollowerAliases.push(followerAliases);
                 hasMoreFollowers = hasMore;
-                lastItem = followers[followers.length-1];
+                lastItem = followerAliases[followerAliases.length-1];
             }
-            await this.checkForError(async() => {
-                for (const followerList of allFollowerAliases) {
+            const logLength = allFollowerAliases.length === 0 ? 0 : (10000*(allFollowerAliases.length-1))+allFollowerAliases[allFollowerAliases.length-1].length;
+            console.log(`Got all followers in ${allFollowerAliases.length} items, total of ${logLength} followers`);
+
+            // Split follower aliases into groups of 200
+            const NEXT_LAMBDA_BATCH_SIZE = 200;
+            let requestNumber = 1;
+            for (let i = 0; i < allFollowerAliases.length; i++) {
+                for (let j = 0; j < allFollowerAliases[i].length; j+= NEXT_LAMBDA_BATCH_SIZE) {
                     const statusInfo: UpdateFeedRequest = {
                         status: status,
-                        followerAliases: followerList
+                        followerAliases: allFollowerAliases[i].slice(j, j+NEXT_LAMBDA_BATCH_SIZE)
                     };
+                    console.log(`Sending request #${requestNumber} to next lambda with ${statusInfo.followerAliases.length} followers...`);
                     await this.queueDAO.sendToQueue(statusInfo, "Tweeter-Update-Feed-Queue");
+                    console.log(`Request #${requestNumber} sent`);
+                    requestNumber++;
                 }
-            });
+            }
+            console.log("All followers sent to next lambda");
         });
     }
 
@@ -109,12 +118,12 @@ export class FollowService extends Service {
         token: string,
         userAlias: string,
         pageSize: number,
-        lastItem: UserDTO | null,
-        daoMethod: (alias: string, pageSize: number, lastItem: UserDTO | null) => Promise<[followeeAliases: string[], hasMorePages: boolean]>
+        lastItemAlias: string | undefined,
+        daoMethod: (alias: string, pageSize: number, lastItemAlias: string | undefined) => Promise<[followeeAliases: string[], hasMorePages: boolean]>
     ) {
         return await this.checkForError(async() => {
             await this.checkToken(token);
-            const [followAliases, hasMorePages] = await daoMethod.call(this.followsDAO, userAlias, pageSize, lastItem);
+            const [followAliases, hasMorePages] = await daoMethod.call(this.followsDAO, userAlias, pageSize, lastItemAlias);
             if (followAliases.length === 0) return [[], false];
             const followUsers = await this.userDAO.getPageOfUserData(followAliases);
             return [followUsers, hasMorePages];
