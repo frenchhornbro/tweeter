@@ -1,0 +1,49 @@
+{
+    "AttributeDefinitions": [
+        {
+            "AttributeName": "followee_handle",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "follower_handle",
+            "AttributeType": "S"
+        }
+    ],
+    "TableName": "follows",
+    "KeySchema": [
+        {
+            "AttributeName": "follower_handle",
+            "KeyType": "HASH"
+        },
+        {
+            "AttributeName": "followee_handle",
+            "KeyType": "RANGE"
+        }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 5,
+        "WriteCapacityUnits": 1
+    },
+    "GlobalSecondaryIndexes": [
+        {
+            "IndexName": "follows_index",
+            "KeySchema": [
+                {
+                    "AttributeName": "followee_handle",
+                    "KeyType": "HASH"
+                },
+                {
+                    "AttributeName": "follower_handle",
+                    "KeyType": "RANGE"
+                }
+            ],
+            "Projection": {
+                "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 100,
+                "WriteCapacityUnits": 1
+            }
+        }
+    ]
+}

@@ -4,8 +4,6 @@
     "version" : "2025-03-25T17:03:49Z",
     "title" : "CS-340-Tweeter-API"
   },
-  "host" : "4y4n13prff.execute-api.us-east-1.amazonaws.com",
-  "basePath" : "/dev",
   "schemes" : [ "https" ],
   "paths" : {
     "/action" : {

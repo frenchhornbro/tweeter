@@ -1,0 +1,27 @@
+{
+    "AttributeDefinitions": [
+        {
+            "AttributeName": "alias",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "timestamp",
+            "AttributeType": "N"
+        }
+    ],
+    "TableName": "feed",
+    "KeySchema": [
+        {
+            "AttributeName": "alias",
+            "KeyType": "HASH"
+        },
+        {
+            "AttributeName": "timestamp",
+            "KeyType": "RANGE"
+        }
+    ],
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 5,
+        "WriteCapacityUnits": 100
+    }
+}
