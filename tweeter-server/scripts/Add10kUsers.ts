@@ -2,8 +2,11 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { BatchWriteCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import bcrypt from "bcryptjs";
 import { UserDTO } from "tweeter-shared";
+import { BUCKET, REGION } from "../src/config";
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient());
+const USER_TO_FOLLOW_ALIAS = "@hyrum";
+const PROFILE_PIC_NAME = "%40generic";
 
 async function batchRegister(users: UserDTO[]) {
     try {
@@ -54,7 +57,8 @@ async function batchFollow(users: UserDTO[]) {
 async function getRegisterPutRequest(user: UserDTO) {
     const salt = await bcrypt.genSalt(3);
     const passwordHash = await bcrypt.hash("password", salt);
-    const imageLink = "https://hyrumdurfee-tweeter.s3.us-east-1.amazonaws.com/image/%40generic";
+    // All users will have the same profile picture. This image must be inserted manually into the bucket.
+    const imageLink = `https://${BUCKET}.s3.${REGION}.amazonaws.com/image/${PROFILE_PIC_NAME}`;
     return {
         PutRequest: {
             Item: {
@@ -73,7 +77,7 @@ async function getFollowPutRequest(user: UserDTO) {
         PutRequest: {
             Item: {
                 follower_handle: user.alias,
-                followee_handle: "@hyrum"
+                followee_handle: USER_TO_FOLLOW_ALIAS
             }
         }
     };
@@ -81,7 +85,7 @@ async function getFollowPutRequest(user: UserDTO) {
 
 console.log("Running script");
 const users: UserDTO[] = [];
-for (let i = 7951; i <= 10000; i++) {
+for (let i = 0; i <= 10000; i++) {
     users.push({
         alias: `@generic-user-${i}`,
         firstname: `Generic`,
@@ -89,5 +93,17 @@ for (let i = 7951; i <= 10000; i++) {
         imageURL: "",
     });
 }
-// batchRegister(users);
-batchFollow(users);
+
+if (process.argv.length != 3) {
+    console.log("Usage: node Add10kUsers.js <follow | register>");
+}
+else {
+    if (process.argv[2].toLowerCase() === "register") {
+        console.log("Calling batchRegister()...")
+        batchRegister(users);
+    }
+    else if (process.argv[2].toLowerCase() === "follow") {
+        console.log("Calling batchFollow()...")
+        batchFollow(users);
+    }
+}

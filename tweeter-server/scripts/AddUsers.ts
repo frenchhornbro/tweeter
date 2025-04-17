@@ -117,7 +117,7 @@ async function addUsers() {
     }
 }
 
-async function addPassOffUser() {
+async function addMainUser() {
     try {
         const [, authToken] = await userService.register(
             "Hyrum",
@@ -162,7 +162,18 @@ async function generateUserPosts() {
     }
 }
 
-
-// addUsers();
-// addPassOffUser();
-generateUserPosts();
+if (process.argv.length != 3) {
+    console.log("Usage: node Add10kUsers.js <users | main | post>");
+}
+if (process.argv[2].toLowerCase() === "users") {
+    console.log("Calling addUsers()...")
+    addUsers();
+}
+else if (process.argv[2].toLowerCase() === "main") {
+    console.log("Calling addMainUser()...")
+    addMainUser();
+}
+else if (process.argv[2].toLowerCase() === "post") {
+    console.log("Calling generateUserPosts()...")
+    generateUserPosts();
+}
