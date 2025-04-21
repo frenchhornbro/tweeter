@@ -14,7 +14,7 @@ This is currently implemented with AWS API Gateway, Labmda, SQS, and DynamoDB. T
     - Lambda
         - Create the lambda layer:
             - In tweeter-server, run `zipDependencies.sh`
-            - Create a ;ambda layer, choose nodejs.zip as the zip file, specify "Node.js 20.x" for Compatible runtimes
+            - Create a lambda layer, choose nodejs.zip as the zip file, specify "Node.js 20.x" for Compatible runtimes
         - Deploy the lambdas:
             - Create tweeter-server/.server with the following:
                 ```
@@ -41,7 +41,7 @@ This is currently implemented with AWS API Gateway, Labmda, SQS, and DynamoDB. T
                 LAMBDALAYER_ARN='<Lambda Layer ARN>'
                 ```
             - In tweeter-server, run `./fullLambdaUpload.sh` (this runs in bash)
-    - API Gateway:
+    - API Gateway
         - Create a new REST API, click Import
         - Specify edge-optimized as the API endpoint type
         - Use tweeter-server/json/apigateway/CS-340-Tweeter-API-dev-swagger.json as the API definition
@@ -52,7 +52,13 @@ This is currently implemented with AWS API Gateway, Labmda, SQS, and DynamoDB. T
         - Deploy the API to the stage
     - DynamoDB
         - Files for the five tables are found in tweeter-server/json/dynamodb
-        > [!WARNING] RCUs and WCUs must be configured in ProvisionedThroughput to avoid unnecessary expenses. Current configurations allow a user with a large number of followers (~10,000) to make a post and have it be deployed to all feeds in ~60 seconds. However, this can incur a significant cost. If this functionality is not needed, drop the feed table's WCUs and the follows_index's RCUs from 100 to 1-5.
+
+        > ⚠️ **Warning:**
+        > 
+        > RCUs and WCUs must be configured in ProvisionedThroughput to avoid unnecessary expenses.
+        > Current configurations allow a user with a large number of followers (~10,000) to make a post and have it be deployed to all feeds in ~60 seconds.
+        > However, this can incur a significant cost. If this functionality is not needed, drop the feed table's WCUs and the follows_index's RCUs from 100 to 1-5.
+
         - Deploy each table with `aws dynamodb create-table --cli-input-json file://tweeter-server/json/dynamodb/<tablename>.json > /dev/null`
         - tweeter-server/scripts contains scripts that can populate the database with 17 users that follow each other or with 10,000 that follow one user. WCUs for the users and follows tables must be increased (up to 200) to avoid capacity errors.
     - SQS
