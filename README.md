@@ -1,6 +1,7 @@
 # Tweeter-Web
 
-> [!NOTE] [Required Setup](./SETUP.md)
+> [!NOTE]
+> **[Required Setup](./SETUP.md)**
 
 ## Running the Application
 Run the project by running 'npm run start' from within the 'tweeter-web' folder. This will run Vite and should automatically open up http://localhost:5173 to access the application.
